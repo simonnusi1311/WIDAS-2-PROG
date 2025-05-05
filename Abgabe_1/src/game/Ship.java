@@ -13,12 +13,12 @@ public class Ship {
 
     public Ship(GameView gameView) {
         this.gameView = gameView;
-        this.position = new Position(1100, 650);
-        this.speedInPixel = 2;
-        this.size = 30;
-        this.rotation = 0;
-        this.width = 150;
-        this.height = 33;
+        position = new Position(1100, 650);
+        speedInPixel = 2;
+        size = 30;
+        rotation = 0;
+        width = 150;
+        height = 33;
     }
 
     @Override
@@ -27,15 +27,13 @@ public class Ship {
     }
 
     public void updatePosition() {
-       position.left(speedInPixel);
+        position.left(speedInPixel);
     }
 
     public void addToCanvas() {
-        gameView.addRectangleToCanvas(position.getX(), position.getY(), this.width, this.height, 5, false, Color.WHITE);
-        gameView.addRectangleToCanvas(position.getX()+4, position.getY()+3, this.width-4, this.height-3, 0, true, Color.GREEN);
-        gameView.addTextToCanvas("Objekt 2", position.getX()+3, position.getY()-4,
+        gameView.addRectangleToCanvas(position.getX(), position.getY(), width, height, 5, false, Color.WHITE);
+        gameView.addRectangleToCanvas(position.getX() + 4, position.getY() + 3, width - 4, height - 3, 0, true, Color.GREEN);
+        gameView.addTextToCanvas("Objekt 2", position.getX() + 2, position.getY() - 4,
                 size, true, Color.BLUE, rotation);
     }
-
-
 }

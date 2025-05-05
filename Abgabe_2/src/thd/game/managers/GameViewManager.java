@@ -4,25 +4,37 @@ import thd.game.utilities.GameView;
 
 import java.awt.*;
 
+/**
+ * Manages the game view and its interactions between the different gaming objects
+ * and contains a {@link GameManager} object instance.
+ * This class initializes the game view window in {@link GameView} with different
+ * properties.
+ *
+ * @see GameView
+ */
+
 public class GameViewManager {
     private final GameView gameView;
     private GameManager gameManager;
 
+    /**
+     * Creates a new instance of {@link GameViewManager}
+     * and starts the game loop.
+     */
     public GameViewManager() {
         gameView = new GameView();
         gameManager = new GameManager(gameView);
         gameView.updateWindowTitle("River Raid");
         gameView.updateStatusText("Simon Nuspahic - Java Programmierung SS 2025");
         gameView.updateWindowIcon("icon.png");
-        gameView.updateBackgroundColor(Color.GRAY);
         startGameLoop();
     }
 
-    private void initialize() {
-        gameView.updateStatusText("Simon Nuspahic - Java Programmierung SS 2025");
-    }
-
     private void startGameLoop() {
-        gameManager.gameLoop();
+        while (gameView.isVisible()) {
+            gameManager.gameLoop();
+            gameView.plotCanvas();
+        }
+
     }
 }

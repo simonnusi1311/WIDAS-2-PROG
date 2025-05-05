@@ -17,23 +17,23 @@ public class Score {
     private final double rotation;
     private final double width;
     private final double height;
-    private int scorePoints;
+    private final int scorePoints;
 
 
     /**
      * Creates a new score display.
      *
-     * @param gameView The GameView object where die score display is rendered.
+     * @param gameView The GameView object where the score display is rendered.
      */
 
     public Score(GameView gameView) {
         this.gameView = gameView;
-        this.size = 30;
-        this.rotation = 0;
-        this.width = 146;
-        this.height = -11;
-        this.position = new Position(GameView.WIDTH - width, height);
-        scorePoints = 0;
+        size = 30;
+        rotation = 0;
+        width = 70;
+        height = 670;
+        position = new Position(GameView.WIDTH - width - 5, -12);
+        scorePoints = 1500;
     }
 
     @Override
@@ -42,8 +42,11 @@ public class Score {
     }
 
     /**
-     * Adds a text (String) at the specified position in the game.
-     * The text will be displayed in the respective color at the x and the y position in {@link GameView}.
+     * Adds the gaming object to the game canvas in {@link GameView}
+     * by placing an image or shape (oval, rectangle, etc.) at the respective position.
+     *
+     * @see GameView
+     * @see Position
      */
     public void addToCanvas() {
         gameView.addTextToCanvas(String.valueOf(scorePoints), position.getX(), position.getY(),

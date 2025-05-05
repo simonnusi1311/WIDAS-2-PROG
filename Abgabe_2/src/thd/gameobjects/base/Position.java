@@ -3,10 +3,10 @@ package thd.gameobjects.base;
 import thd.game.utilities.GameView;
 
 /**
- * Represents a position in the game River Raid with x and y coordinates.
- * <p>
- * The position is used to determine the location of objects within the game window,
- * which has a resolution defined in {@link GameView}.
+ * Position with x and y coordinates for game objects.
+ * The class contains also methods for manipulation the coordinates.
+ * The window's resolution is managed by {@link GameView}.
+ *
  * @see GameView
  */
 public class Position {

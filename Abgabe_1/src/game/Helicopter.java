@@ -11,10 +11,10 @@ public class Helicopter {
 
     public Helicopter(GameView gameView) {
         this.gameView = gameView;
-        this.position = new Position(0, GameView.HEIGHT / 2.0);
-        this.speedInPixel = 5;
-        this.size = 30;
-        this.rotation = 0;
+        position = new Position(0, GameView.HEIGHT / 2.0);
+        speedInPixel = 5;
+        size = 30;
+        rotation = 0;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class Helicopter {
 
     public void updatePosition() {
         position.right(speedInPixel);
-        this.rotation++;
+        rotation++;
     }
 
     public void addToCanvas() {

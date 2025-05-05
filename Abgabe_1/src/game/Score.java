@@ -11,10 +11,10 @@ public class Score {
 
     public Score(GameView gameView) {
         this.gameView = gameView;
-        this.size = 33;
-        this.rotation = 0;
-        this.width = 150;
-        this.position = new Position(GameView.WIDTH - width, -11);
+        size = 33;
+        rotation = 0;
+        width = 158;
+        position = new Position(GameView.WIDTH - width, -13);
     }
 
     @Override
@@ -26,6 +26,5 @@ public class Score {
         gameView.addTextToCanvas("Objekt 3", position.getX(), position.getY(),
                 size, true, Color.YELLOW, rotation);
     }
-
 
 }
