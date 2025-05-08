@@ -22,12 +22,14 @@ public class GamePlayManager extends WorldShiftManager {
     protected int lives;
     private int levelCounterForBridge;
     private Tank activeTank;
+    private boolean bridgeIsActive;
 
     protected GamePlayManager(GameView gameView) {
         super(gameView);
         gameObjectManager = new GameObjectManager();
         random = new Random();
         lives = LIVES;
+        bridgeIsActive = false;
     }
 
     /**
@@ -126,24 +128,22 @@ public class GamePlayManager extends WorldShiftManager {
     }
 
     private void gamePlayManagement() {
-        var bridge = new Bridge(gameView, this);
-        if (gameView.timer(18000, 0, this)) {
-            spawnGameObject(bridge);
-            bridge.setCounterForLevel(levelCounterForBridge);
-            activeTank = new Tank(gameView, this);
-            spawnGameObject(activeTank);
+        setBridgeToActiveStatus();
+        if (gameView.timer(15000, 0, this)) {
+            spawnBridgeBorders();
         }
-        if (gameView.timer(random.nextInt(500, 2000), 0, this)) {
+
+        if (!bridgeIsActive && gameView.timer(random.nextInt(500, 2000), 0, this)) {
             spawnRandomEnemy();
+        }
+        if (!bridgeIsActive && gameView.timer(random.nextInt(4000, 8000), 0, this)) {
+            spawnGameObject(new FuelItem(gameView, this));
         }
         if (gameView.timer(random.nextInt(3000, 6000), 0, this)) {
             spawnGameObject(new GreyJet(gameView, this));
         }
         if (gameView.timer(random.nextInt(5000, 8000), 0, this) && activeTank == null) {
             spawnGameObject(new Tank(gameView, this));
-        }
-        if (gameView.timer(random.nextInt(4000, 8000), 0, this) && activeTank == null) {
-            spawnGameObject(new FuelItem(gameView, this));
         }
     }
 
@@ -154,6 +154,32 @@ public class GamePlayManager extends WorldShiftManager {
         GameObject[] randomGameObject = new GameObject[]{ship, helicopter, balloon};
         int randomNumber = random.nextInt(3);
         spawnGameObject(randomGameObject[randomNumber]);
+    }
+
+    private void spawnBridgeBorders() {
+        bridgeIsActive = true;
+        var bridge = new Bridge(gameView, this);
+        var bridgeLeft = new BridgeLeft(gameView, this);
+        var bridgeRight = new BridgeRight(gameView, this);
+        spawnGameObject(bridge);
+        spawnGameObject(bridgeLeft);
+        spawnGameObject(bridgeRight);
+        jetFighter.addPathDecisionObjects(bridgeLeft);
+        jetFighter.addPathDecisionObjects(bridgeRight);
+        bridge.setCounterForLevel(levelCounterForBridge);
+        spawnTankOnBridgeStreet();
+    }
+
+    private void spawnTankOnBridgeStreet() {
+        Tank tank = new Tank(gameView, this);
+        tank.getPosition().updateCoordinates(tank.getPosition().getX(), tank.getPosition().getY() - 30);
+        spawnGameObject(tank);
+    }
+
+    private void setBridgeToActiveStatus() {
+        if (bridgeIsActive && gameView.timer(3000, 0, this)) {
+            bridgeIsActive = false;
+        }
     }
 
     @Override

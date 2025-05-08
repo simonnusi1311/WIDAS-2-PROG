@@ -50,6 +50,7 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
 
     @Override
     public void updatePosition() {
+        position.down(0.5);
         if (tank.getTankMovementPattern().movingRight) {
             position.right(speedInPixel);
         }

@@ -13,7 +13,6 @@ import thd.gameobjects.base.*;
  * @see GameView
  * @see Position
  */
-
 public class FuelItem extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final FuelItemMovementPattern fuelItemMovementPattern;
 

@@ -18,8 +18,8 @@ class GameWorldManager extends GamePlayManager {
     protected GameWorldManager(GameView gameView) {
         super(gameView);
         world = """
-                                                                            F                                                                                \s
-                                                                                                                                                             \s
+                \s
+                                                                           F                                                                                 \s
                                                                                                                                                              \s
                                                                                                                                                              \s
                                                        S                                                                                                     \s
@@ -79,6 +79,7 @@ class GameWorldManager extends GamePlayManager {
                                                                                                                                                              \s
                                                                                                                                                              \s
                                                                                                                                                              \s
+                              L                                                                       R                                                      \s
                                                                                                                                                              \s
                                                                                                                                                              \s
                                                                                                                                                              \s
@@ -91,9 +92,7 @@ class GameWorldManager extends GamePlayManager {
                                                                                                                                                              \s
                                                                                                                                                              \s
                                                                                                                                                              \s
-                                                                                                                                                             \s
-                                                                                                                                                             \s
-                \s""";
+                                                                                                                                                             \s""";
         worldOffsetColumns = 14;
         worldOffsetLines = 4;
         activatableGameObjects = new LinkedList<>();
@@ -154,6 +153,16 @@ class GameWorldManager extends GamePlayManager {
                     FuelItem fuelItem = new FuelItem(gameView, this);
                     fuelItem.getPosition().updateCoordinates(x, y);
                     addActivatableGameObject(fuelItem);
+                } else if (character == 'L') {
+                    BridgeLeft bridgeLeft = new BridgeLeft(gameView, this);
+                    jetFighter.addPathDecisionObjects(bridgeLeft);
+                    bridgeLeft.getPosition().updateCoordinates(x, y);
+                    spawnGameObject(bridgeLeft);
+                } else if (character == 'R') {
+                    BridgeRight bridgeRight = new BridgeRight(gameView, this);
+                    jetFighter.addPathDecisionObjects(bridgeRight);
+                    bridgeRight.getPosition().updateCoordinates(x, y);
+                    spawnGameObject(bridgeRight);
                 }
             }
         }
