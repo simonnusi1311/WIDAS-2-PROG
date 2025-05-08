@@ -2,9 +2,7 @@ package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
-import thd.gameobjects.base.CollidingGameObject;
-import thd.gameobjects.base.Position;
-import thd.gameobjects.base.ShiftableGameObject;
+import thd.gameobjects.base.*;
 
 /**
  * Represents an enemy fuel-item in the {@link GameView} window.
@@ -16,7 +14,7 @@ import thd.gameobjects.base.ShiftableGameObject;
  * @see Position
  */
 
-public class FuelItem extends CollidingGameObject implements ShiftableGameObject {
+public class FuelItem extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final FuelItemMovementPattern fuelItemMovementPattern;
 
     /**
@@ -76,5 +74,10 @@ public class FuelItem extends CollidingGameObject implements ShiftableGameObject
     public void addToCanvas() {
         gameView.addImageToCanvas("fuel.png", position.getX(), position.getY(), size, 0);
 
+    }
+
+    @Override
+    public boolean tryToActivate(JetFighter jetFighter) {
+        return jetFighter.getPosition().getX() < GameView.WIDTH;
     }
 }

@@ -31,6 +31,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      *
      * @param gameView        The gaming window where the jet fighter will be displayed.
      * @param gamePlayManager The main gameplay logic.
+     * @param redFuelBar      The fuel bar for the interaction between it.
      */
 
     public JetFighter(GameView gameView, GamePlayManager gamePlayManager, RedFuelBar redFuelBar) {
@@ -93,14 +94,14 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
     }
 
     /**
-     * Increase the speed and sets increaseTheSpeed on true:
+     * Increase the speed and sets increaseTheSpeed on true.
      */
     public void speedUp() {
         increaseTheSpeed = true;
     }
 
     /**
-     * Stops the speed and sets increaseTheSpeed on false;
+     * Stops the speed and sets increaseTheSpeed on false.
      */
     public void stopSpeedUp() {
         increaseTheSpeed = false;
@@ -141,7 +142,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         collisionWithFuelItem = false;
         if (increaseTheSpeed) {
             gamePlayManager.moveWorldDown(1.3);
-            this.redFuelBar.getPosition().left(0.10);
+            redFuelBar.getPosition().left(0.10);
         }
     }
 

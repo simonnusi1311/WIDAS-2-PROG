@@ -100,7 +100,8 @@ public abstract class GameObject {
     }
 
     /**
-     * Gets the distance to the background.
+     * Returns the distance to the background.
+     *
      * @return The distance to the background.
      */
     public char getDistanceToBackground() {

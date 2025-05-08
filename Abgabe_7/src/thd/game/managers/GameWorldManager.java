@@ -18,7 +18,7 @@ class GameWorldManager extends GamePlayManager {
     protected GameWorldManager(GameView gameView) {
         super(gameView);
         world = """
-                                                                                                                                                             \s
+                                                                            F                                                                                \s
                                                                                                                                                              \s
                                                                                                                                                              \s
                                                                                                                                                              \s
@@ -120,14 +120,19 @@ class GameWorldManager extends GamePlayManager {
         spawnGameObject(sceneryRight);
     }
 
+    private void addActivatableGameObject(GameObject gameObject) {
+        activatableGameObjects.add(gameObject);
+        addToShiftableGameObjectsIfShiftable(gameObject);
+    }
+
     private void spawnGameObjectsFromWorldString() {
         String[] lines = world.split("\\R");
-        int factorForWorld = 10;
-        for (int line = 0; line < lines.length; line++) {
-            for (int column = 0; column < lines[line].length(); column++) {
-                char character = lines[line].charAt(column);
-                double x = (column - worldOffsetColumns) * factorForWorld;
-                double y = (line - worldOffsetLines) * factorForWorld;
+        int factorForRepresentation = 10;
+        for (int lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+            for (int columnIndex = 0; columnIndex < lines[lineIndex].length(); columnIndex++) {
+                char character = lines[lineIndex].charAt(columnIndex);
+                double x = (columnIndex - worldOffsetColumns) * factorForRepresentation;
+                double y = (lineIndex - worldOffsetLines) * factorForRepresentation;
 
                 if (character == 'B') {
                     Balloon balloon = new Balloon(gameView, this);
@@ -154,24 +159,22 @@ class GameWorldManager extends GamePlayManager {
         }
     }
 
-    private void addActivatableGameObject(GameObject gameObject) {
-        activatableGameObjects.add(gameObject);
-        addToShiftableGameObjectsIfShiftable(gameObject);
+    private void activateGameObjects() {
+        ListIterator<GameObject> iterator = activatableGameObjects.listIterator();
+        while (iterator.hasNext()) {
+            GameObject gameObject = iterator.next();
+            if (gameObject instanceof FuelItem fuelItem) {
+                if (fuelItem.tryToActivate(jetFighter)) {
+                    spawnGameObject(gameObject);
+                    iterator.remove();
+                }
+            }
+        }
     }
 
     @Override
     protected void gameLoop() {
         super.gameLoop();
         activateGameObjects();
-    }
-
-    private void activateGameObjects() {
-        ListIterator<GameObject> iterator = activatableGameObjects.listIterator();
-        while (iterator.hasNext()) {
-            GameObject gameObject = iterator.next();
-            if (gameObject instanceof FuelItem fuelItem) {
-
-            }
-        }
     }
 }
