@@ -19,7 +19,7 @@ import thd.gameobjects.base.ShiftableGameObject;
 public class Tank extends GameObject implements ShiftableGameObject {
     private final TankMovementPattern tankMovementPattern;
     private ShootFromTank shootFromTank;
-    private final int randomNumberForShoot;
+    private boolean shotIsActive;
 
     /**
      * Creates a new ship object with default position, speed, size and other properties.
@@ -36,8 +36,8 @@ public class Tank extends GameObject implements ShiftableGameObject {
         rotation = 0;
         width = 150;
         height = 33;
-        randomNumberForShoot = (int) (Math.random() * 6000) + 2000;
         distanceToBackground = 2;
+        shotIsActive = false;
     }
 
     @Override
@@ -61,14 +61,18 @@ public class Tank extends GameObject implements ShiftableGameObject {
     private void shootOnPlayer() {
         boolean tankHitsRightOrLeftBoundary = (gameObjectHitsLeftBoundary() && tankMovementPattern.movingRight)
                 || (gameObjectHitsRightBoundary() && !tankMovementPattern.movingRight);
-        if (tankHitsRightOrLeftBoundary) {
+        if (tankHitsRightOrLeftBoundary && !shotIsActive) {
             shootFromTank = new ShootFromTank(gameView, gamePlayManager, this);
             double shootXCoordinate = tankMovementPattern.movingRight ? position.getX() + 38 : position.getX() - 8;
             shootFromTank.updateTheStartPositionFromShoot(shootXCoordinate, position.getY() + 10);
+            changeShootToActive(shootFromTank);
+        }
+    }
 
-            if (gameView.timer(randomNumberForShoot, 0, this)) {
-                gamePlayManager.spawnGameObject(shootFromTank);
-            }
+    private void changeShootToActive(ShootFromTank shootFromTank) {
+        if (position.getY() >= 550) {
+            gamePlayManager.spawnGameObject(shootFromTank);
+            shotIsActive = true;
         }
     }
 

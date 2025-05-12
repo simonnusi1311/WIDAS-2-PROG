@@ -3,7 +3,7 @@ package thd.gameobjects.movable;
 
 class ShootFromTankBlockImages {
 
-    static final String SHOOT_FROM_PLAYER_BLOCK_IMAGES = """
+    static final String SHOOT_FROM_TANK_BLOCK_IMAGES = """
               W
             """;
 }

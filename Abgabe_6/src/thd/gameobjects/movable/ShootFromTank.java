@@ -75,6 +75,6 @@ class ShootFromTank extends CollidingGameObject {
      */
     @Override
     public void addToCanvas() {
-        gameView.addBlockImageToCanvas(ShootFromPlayerBlockImages.SHOOT_FROM_PLAYER_BLOCK_IMAGES, position.getX(), position.getY(), 4, 0);
+        gameView.addBlockImageToCanvas(ShootFromTankBlockImages.SHOOT_FROM_TANK_BLOCK_IMAGES, position.getX(), position.getY(), 4, 0);
     }
 }

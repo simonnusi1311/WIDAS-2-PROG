@@ -25,6 +25,7 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
         rotation = 0;
         width = 9;
         height = 2;
+        distanceToBackground = 2;
         hitBoxOffsets(0, 0, 1, 0);
     }
 
@@ -82,6 +83,6 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
      */
     @Override
     public void addToCanvas() {
-        gameView.addBlockImageToCanvas(ShootFromTankBlockImages.SHOOT_FROM_PLAYER_BLOCK_IMAGES, position.getX(), position.getY(), 4, 0);
+        gameView.addBlockImageToCanvas(ShootFromTankBlockImages.SHOOT_FROM_TANK_BLOCK_IMAGES, position.getX(), position.getY(), 4, 0);
     }
 }

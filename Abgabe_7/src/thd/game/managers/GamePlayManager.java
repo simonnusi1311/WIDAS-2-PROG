@@ -23,6 +23,7 @@ public class GamePlayManager extends WorldShiftManager {
     private int levelCounterForBridge;
     private Tank activeTank;
     private boolean bridgeIsActive;
+    private boolean tankIsActiveForBridge;
 
     protected GamePlayManager(GameView gameView) {
         super(gameView);
@@ -30,6 +31,7 @@ public class GamePlayManager extends WorldShiftManager {
         random = new Random();
         lives = LIVES;
         bridgeIsActive = false;
+        tankIsActiveForBridge = false;
     }
 
     /**
@@ -128,7 +130,7 @@ public class GamePlayManager extends WorldShiftManager {
     }
 
     private void gamePlayManagement() {
-        setBridgeToActiveStatus();
+        changeBridgeAndTankStatus();
         if (gameView.timer(15000, 0, this)) {
             spawnBridgeBorders();
         }
@@ -142,8 +144,8 @@ public class GamePlayManager extends WorldShiftManager {
         if (gameView.timer(random.nextInt(3000, 6000), 0, this)) {
             spawnGameObject(new GreyJet(gameView, this));
         }
-        if (gameView.timer(random.nextInt(5000, 8000), 0, this) && activeTank == null) {
-            spawnGameObject(new Tank(gameView, this));
+        if (!tankIsActiveForBridge && gameView.timer(random.nextInt(5000, 8000), 0, this) && activeTank == null) {
+            logicForTankSpawn();
         }
     }
 
@@ -171,15 +173,23 @@ public class GamePlayManager extends WorldShiftManager {
     }
 
     private void spawnTankOnBridgeStreet() {
+        tankIsActiveForBridge = true;
         Tank tank = new Tank(gameView, this);
         tank.getPosition().updateCoordinates(tank.getPosition().getX(), tank.getPosition().getY() - 30);
         spawnGameObject(tank);
     }
 
-    private void setBridgeToActiveStatus() {
+    private void changeBridgeAndTankStatus() {
         if (bridgeIsActive && gameView.timer(3000, 0, this)) {
             bridgeIsActive = false;
+            tankIsActiveForBridge = false;
         }
+    }
+
+    private void logicForTankSpawn() {
+        var tank = new Tank(gameView, this);
+        activeTank = tank;
+        spawnGameObject(tank);
     }
 
     @Override
