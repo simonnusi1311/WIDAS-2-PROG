@@ -2,6 +2,7 @@ package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
+import thd.gameobjects.base.ActivatableGameObject;
 import thd.gameobjects.base.CollidingGameObject;
 import thd.gameobjects.base.Position;
 import thd.gameobjects.base.ShiftableGameObject;
@@ -18,7 +19,7 @@ import thd.gameobjects.unmovable.SceneryRight;
  * @see Position
  */
 
-public class Helicopter extends CollidingGameObject implements ShiftableGameObject {
+public class Helicopter extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final HelicopterMovementPattern helicopterMovementPattern;
 
     /**
@@ -90,5 +91,9 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
         }
     }
 
+    @Override
+    public boolean tryToActivate(JetFighter info) {
+        return getPosition().getY() < info.getPosition().getY() + ACTIVATION_DISTANCE;
+    }
 }
 

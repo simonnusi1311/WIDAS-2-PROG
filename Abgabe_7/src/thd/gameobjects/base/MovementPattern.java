@@ -2,6 +2,7 @@ package thd.gameobjects.base;
 
 import java.util.Random;
 
+import thd.game.utilities.GameView;
 import thd.gameobjects.unmovable.SceneryRight;
 import thd.gameobjects.unmovable.SceneryLeft;
 
@@ -36,10 +37,11 @@ public class MovementPattern {
      * @param gameObject the object that should be checked.
      */
     public void gamingObjectCanMoveHorizontal(GameObject gameObject) {
-        if (movingRight) {
+        double yCoordinate = gameObject.getPosition().getY();
+        if (movingRight && yCoordinate >= -100 && yCoordinate <= GameView.HEIGHT + 100) {
             gameObject.getPosition().right(gameObject.speedInPixel);
         }
-        if (!movingRight) {
+        if (!movingRight && yCoordinate >= -100 && yCoordinate <= GameView.HEIGHT + 100) {
             gameObject.getPosition().left(gameObject.speedInPixel);
         }
     }

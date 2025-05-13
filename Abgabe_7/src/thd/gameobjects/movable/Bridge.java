@@ -74,14 +74,14 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject {
         position.down(speedInPixel);
     }
 
-    /**
-     * Set the counter for the current level.
-     *
-     * @param counterForLevel the value to set.
-     */
-    public void setCounterForLevel(int counterForLevel) {
-        this.counterForLevel = counterForLevel;
-    }
+    //    /**
+    //     * Set the counter for the current level.
+    //     *
+    //     * @param counterForLevel the value to set.
+    //     */
+    //    public void setCounterForLevel(int counterForLevel) {
+    //        this.counterForLevel = counterForLevel;
+    //    }
 
     /**
      * Adds the gaming object to the game canvas in {@link GameView}

@@ -76,7 +76,7 @@ public class FuelItem extends CollidingGameObject implements ShiftableGameObject
     }
 
     @Override
-    public boolean tryToActivate(JetFighter jetFighter) {
-        return jetFighter.getPosition().getX() < GameView.WIDTH;
+    public boolean tryToActivate(JetFighter info) {
+        return getPosition().getY() < info.getPosition().getY() + ACTIVATION_DISTANCE;
     }
 }

@@ -1,12 +1,16 @@
 package thd.gameobjects.base;
 
 /**
- * The interface is responsible for all inactive game objects at
- * the beginning of the loop.
+ * The interface is responsible for Activation-Method Declarations.
  *
  * @param <T> the type of game object in the respective context to determine activation.
  */
 public interface ActivatableGameObject<T> {
+
+    /**
+     * Offset From Before GameObject should activate.
+     */
+    int ACTIVATION_DISTANCE = 300;
 
     /**
      * Attempts to activate the object based on the provided override in the method.

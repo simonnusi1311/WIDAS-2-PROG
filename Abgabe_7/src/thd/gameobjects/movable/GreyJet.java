@@ -2,6 +2,7 @@ package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
+import thd.gameobjects.base.ActivatableGameObject;
 import thd.gameobjects.base.CollidingGameObject;
 import thd.gameobjects.base.Position;
 import thd.gameobjects.base.ShiftableGameObject;
@@ -16,7 +17,7 @@ import thd.gameobjects.base.ShiftableGameObject;
  * @see Position
  */
 
-public class GreyJet extends CollidingGameObject implements ShiftableGameObject {
+public class GreyJet extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final GreyJetMovementPattern greyJetMovementPattern;
 
     /**
@@ -31,7 +32,7 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject 
         super(gameView, gamePlayManager);
         greyJetMovementPattern = new GreyJetMovementPattern();
         position.updateCoordinates(greyJetMovementPattern.startPosition());
-        speedInPixel = 5;
+        speedInPixel = 6;
         size = 0.80;
         rotation = 0;
         width = 35;
@@ -76,7 +77,7 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject 
      */
     @Override
     public void updatePosition() {
-        position.down(0.7);
+        position.down(1.0);
         greyJetMovementPattern.gamingObjectCanMoveHorizontal(this);
         teleportToOppositeSide();
     }
@@ -88,6 +89,16 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject 
             position.updateCoordinates(0, position.getY());
         }
     }
+
+    /**
+     * Determines the direction for the movement of the GreyJet.
+     *
+     * @param movingRight {code true} for moving right else left.
+     */
+    public void initializeTheSpawnPoint(boolean movingRight) {
+        greyJetMovementPattern.movingRight = movingRight;
+    }
+
 
     /**
      * Adds the gaming object to the game canvas in {@link GameView}
@@ -103,5 +114,10 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject 
         } else {
             gameView.addImageToCanvas("grey_jet_left.png", position.getX(), position.getY(), size, 0);
         }
+    }
+
+    @Override
+    public boolean tryToActivate(JetFighter info) {
+        return getPosition().getY() < info.getPosition().getY() + ACTIVATION_DISTANCE;
     }
 }

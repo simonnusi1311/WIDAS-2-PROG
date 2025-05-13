@@ -2,6 +2,7 @@ package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
+import thd.gameobjects.base.ActivatableGameObject;
 import thd.gameobjects.base.CollidingGameObject;
 import thd.gameobjects.base.Position;
 import thd.gameobjects.base.ShiftableGameObject;
@@ -16,7 +17,7 @@ import java.awt.*;
  * @see Position
  */
 
-public class BridgeLeft extends CollidingGameObject implements ShiftableGameObject {
+public class BridgeLeft extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
 
     /**
      * Creates the Bridge street on the left side.
@@ -73,4 +74,8 @@ public class BridgeLeft extends CollidingGameObject implements ShiftableGameObje
         gameView.addRectangleToCanvas(position.getX(), position.getY() + 37, width, 3, 3, true, Color.YELLOW.darker());
     }
 
+    @Override
+    public boolean tryToActivate(JetFighter info) {
+        return position.getY() < info.getPosition().getY() + ACTIVATION_DISTANCE;
+    }
 }

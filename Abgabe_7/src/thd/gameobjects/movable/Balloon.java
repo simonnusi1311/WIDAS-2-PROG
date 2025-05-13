@@ -2,6 +2,7 @@ package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
+import thd.gameobjects.base.ActivatableGameObject;
 import thd.gameobjects.base.CollidingGameObject;
 import thd.gameobjects.base.Position;
 import thd.gameobjects.base.ShiftableGameObject;
@@ -18,7 +19,7 @@ import thd.gameobjects.unmovable.SceneryRight;
  * @see Position
  */
 
-public class Balloon extends CollidingGameObject implements ShiftableGameObject {
+public class Balloon extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final BalloonMovementPattern balloonMovementPattern;
 
     /**
@@ -86,5 +87,8 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject 
         gameView.addImageToCanvas("balloon.png", position.getX(), position.getY(), size, 0);
     }
 
-
+    @Override
+    public boolean tryToActivate(JetFighter info) {
+        return getPosition().getY() < info.getPosition().getY() + ACTIVATION_DISTANCE;
+    }
 }

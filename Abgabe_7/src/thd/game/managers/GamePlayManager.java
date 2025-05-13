@@ -131,52 +131,9 @@ public class GamePlayManager extends WorldShiftManager {
 
     private void gamePlayManagement() {
         changeBridgeAndTankStatus();
-        if (gameView.timer(15000, 0, this)) {
-            spawnBridgeBorders();
-        }
-
-        if (!bridgeIsActive && gameView.timer(random.nextInt(500, 2000), 0, this)) {
-            spawnRandomEnemy();
-        }
-        if (!bridgeIsActive && gameView.timer(random.nextInt(4000, 8000), 0, this)) {
-            spawnGameObject(new FuelItem(gameView, this));
-        }
-        if (gameView.timer(random.nextInt(3000, 6000), 0, this)) {
-            spawnGameObject(new GreyJet(gameView, this));
-        }
         if (!tankIsActiveForBridge && gameView.timer(random.nextInt(5000, 8000), 0, this) && activeTank == null) {
             logicForTankSpawn();
         }
-    }
-
-    private void spawnRandomEnemy() {
-        var ship = new Ship(gameView, this);
-        var helicopter = new Helicopter(gameView, this);
-        var balloon = new Balloon(gameView, this);
-        GameObject[] randomGameObject = new GameObject[]{ship, helicopter, balloon};
-        int randomNumber = random.nextInt(3);
-        spawnGameObject(randomGameObject[randomNumber]);
-    }
-
-    private void spawnBridgeBorders() {
-        bridgeIsActive = true;
-        var bridge = new Bridge(gameView, this);
-        var bridgeLeft = new BridgeLeft(gameView, this);
-        var bridgeRight = new BridgeRight(gameView, this);
-        spawnGameObject(bridge);
-        spawnGameObject(bridgeLeft);
-        spawnGameObject(bridgeRight);
-        jetFighter.addPathDecisionObjects(bridgeLeft);
-        jetFighter.addPathDecisionObjects(bridgeRight);
-        bridge.setCounterForLevel(levelCounterForBridge);
-        spawnTankOnBridgeStreet();
-    }
-
-    private void spawnTankOnBridgeStreet() {
-        tankIsActiveForBridge = true;
-        Tank tank = new Tank(gameView, this);
-        tank.getPosition().updateCoordinates(tank.getPosition().getX(), tank.getPosition().getY() - 30);
-        spawnGameObject(tank);
     }
 
     private void changeBridgeAndTankStatus() {
