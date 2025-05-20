@@ -6,48 +6,44 @@ import thd.gameobjects.base.ActivatableGameObject;
 import thd.gameobjects.base.CollidingGameObject;
 import thd.gameobjects.base.Position;
 import thd.gameobjects.base.ShiftableGameObject;
-
-import java.awt.*;
+import thd.gameobjects.unmovable.SceneryLeft;
+import thd.gameobjects.unmovable.SceneryRight;
 
 /**
- * Represents a bridge in the {@link GameView} window.
- * The bridge is a movable object and is a border to the
- * next level section. {@link Position}
+ * Represents an enemy ship in the {@link GameView} window.
+ * The ship is a movable object that has different properties,
+ * such as speed and size. The position is defined by the
+ * x and y coordinates from {@link Position}
  *
  * @see GameView
  * @see Position
  */
 
-public class Bridge extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
-    private final BridgeMovementPattern bridgeMovementPattern;
-    private int counterForLevel;
-
+public class Ship extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
+    private final ShipMovementPattern shipMovementPattern;
 
     /**
-     * Creates a new bridge in game view.
+     * Creates a new ship object with default position, speed, size and other properties.
      *
-     * @param gameView        The gaming window where the Bridge will be displayed.
+     * @param gameView        The gaming window where the ship will be displayed.
      * @param gamePlayManager The main gameplay logic.
      */
-
-    public Bridge(GameView gameView, GamePlayManager gamePlayManager) {
+    public Ship(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        bridgeMovementPattern = new BridgeMovementPattern();
-        position.updateCoordinates(bridgeMovementPattern.startPosition());
+        shipMovementPattern = new ShipMovementPattern();
+        position.updateCoordinates(shipMovementPattern.startPosition());
         speedInPixel = 1.3;
-        size = 0.50;
+        size = 0.80;
         rotation = 0;
-        width = 135;
-        height = 75;
-        counterForLevel = 1;
-        hitBoxOffsets(4, 10, 0, -5);
+        width = 70;
+        height = 30;
+        hitBoxOffsets(7, 4, -2, -5);
         distanceToBackground = 2;
     }
 
     @Override
     public void updateStatus() {
         if (gameObjectHitsLowerBoundary()) {
-            counterForLevel++;
             gamePlayManager.destroyGameObject(this);
         }
     }
@@ -55,13 +51,15 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof ShootFromPlayer) {
-            gamePlayManager.addPoints(100);
+            gamePlayManager.addPoints(30);
             gamePlayManager.destroyGameObject(this);
-            gamePlayManager.levelCounter();
         }
         if (other instanceof JetFighter) {
             gamePlayManager.lifeLost();
             gamePlayManager.destroyGameObject(this);
+        }
+        if (other instanceof SceneryLeft || other instanceof SceneryRight) {
+            shipMovementPattern.changeDirectionIfObjectHitsBoundary();
         }
     }
 
@@ -73,16 +71,8 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
     @Override
     public void updatePosition() {
         position.down(speedInPixel);
+        shipMovementPattern.gamingObjectCanMoveHorizontal(this);
     }
-
-    //    /**
-    //     * Set the counter for the current level.
-    //     *
-    //     * @param counterForLevel the value to set.
-    //     */
-    //    public void setCounterForLevel(int counterForLevel) {
-    //        this.counterForLevel = counterForLevel;
-    //    }
 
     /**
      * Adds the gaming object to the game canvas in {@link GameView}
@@ -93,13 +83,15 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
      */
     @Override
     public void addToCanvas() {
-        gameView.addImageToCanvas("bridge.png", position.getX(), position.getY(), size, 0);
-        gameView.addTextToCanvas(String.format("%04d", counterForLevel), position.getX() + 26, position.getY() + 24, 35, true, Color.BLACK, 0, "font.ttf");
+        if (shipMovementPattern.movingRight) {
+            gameView.addImageToCanvas("ship.png", position.getX(), position.getY(), size, 0);
+        } else {
+            gameView.addImageToCanvas("ship_left.png", position.getX(), position.getY(), size, 0);
+        }
     }
-
 
     @Override
     public boolean tryToActivate(JetFighter info) {
-        return getPosition().getY() < info.getPosition().getY() + ACTIVATION_DISTANCE;
+        return position.getY() < info.getPosition().getY() + ACTIVATION_DISTANCE;
     }
 }

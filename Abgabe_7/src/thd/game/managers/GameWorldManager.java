@@ -8,10 +8,10 @@ import thd.gameobjects.unmovable.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 
 class GameWorldManager extends GamePlayManager {
     private final String world;
-    private final String world2;
     private final int worldOffsetColumns;
     private final int worldOffsetLines;
     private final List<GameObject> activatableGameObjects;
@@ -19,20 +19,20 @@ class GameWorldManager extends GamePlayManager {
     protected GameWorldManager(GameView gameView) {
         super(gameView);
         world = """
-                                                                          F                                                                                     \s
+                L                                                     X            R                                                                           T\s
                                                                                                                                                                 \s
                                                                                            S                                                                    \s
                 G                                                                                                                                               \s
                                                                           H                                                                                     \s
                                                                                                                                                                 \s
                                                           B                                                                                                     \s
-                                                                                                 H                                                              \s
                                                                                                                                                                 \s
                                                                                                                                                                 \s
-                                                    B                                                                                                           \s
+                                                                            F                                                                                   \s
+                                                                                                                                                                \s
                                                                                                                                                                 \s
                                                                                               B                                                                 \s
-                                                                                                                                                                \s
+                T                                                                                                                                               \s
                                                                                                                                                                G\s
                 G                                                                       H                                                                       \s
                                                                                                                                                                 \s
@@ -45,7 +45,7 @@ class GameWorldManager extends GamePlayManager {
                                                                                                                                                                 \s
                                                              B                                                                                                  \s
                                                                                               B                                                                 \s
-                                                        S                                                                                                       \s
+                                                        S                                                                                                      T\s
                                                                                                                                                                 \s
                                                                      H                                                                                          \s
                                                                                                                                                                 \s
@@ -59,29 +59,26 @@ class GameWorldManager extends GamePlayManager {
                                                                           F                                                                                     \s
                                                                                                                                                                 \s
                                            H                                                                                                                    \s
-                                                                                                                                                                \s
+                                                                                                                                                               T\s
                                                                         S                                                                                       \s
                                                                                                                                                                 \s
                                                                                                                                                                 \s
                                                         B                                                                                                       \s
-                                                                                                                                                                \s
+                G                                                                                                                                               \s
                                                                                                                                                                 \s
                                                         H                                                                                                       \s
                                                                                                                                                                 \s
                                                                                            H                                                                    \s
                                                                                                                                                                G\s
-                                                                                                                                                                \s
+                                                                             S                                                                                  \s
                                                                                                                                                                 \s
                                                                                                                                                                \s
                                                                                                                                                                  \s
-                L                                                                  R                                                                            \s
-                """;
-
-        world2 = "B";
+                L                                                                  R                                                                            \s""";
 
 
         worldOffsetColumns = 0;
-        worldOffsetLines = 50;
+        worldOffsetLines = 44;
         activatableGameObjects = new LinkedList<>();
         score = new Score(gameView, this);
         redFuelBar = new RedFuelBar(gameView, this);
@@ -94,6 +91,55 @@ class GameWorldManager extends GamePlayManager {
         spawnGameObjects();
         spawnGameObjectsFromWorldString();
     }
+
+    /**
+     * Not in use jet, later important for random world String spawn
+     *
+     * @return the random world String based on the probability.
+     */
+    private String fillTheWorldStringWithObjects() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        char[] randomEnemiesForSpawn = {'H', 'B', 'S'};
+        boolean alreadyOneObjectInLine = false;
+        boolean addAnyObject = false;
+        for (int lines = 0; lines < 56; lines++) {
+            for (int columns = 0; columns < 145; columns++) {
+                int randomNumberToSpawn = random.nextInt(3);
+                if (!addAnyObject) {
+                    sb.append(" ");
+                }
+                if (columns > 60 && columns < 90 && random.nextDouble() > 0.97 && !alreadyOneObjectInLine) {
+                    sb.append(randomEnemiesForSpawn[randomNumberToSpawn]);
+                    alreadyOneObjectInLine = true;
+                    addAnyObject = true;
+                }
+                if (random.nextDouble() > 0.98) {
+                    if (columns == 0) {
+                        sb.append("G");
+                        addAnyObject = true;
+                    } else if (columns == 144) {
+                        sb.append("G");
+                        addAnyObject = true;
+                    }
+                }
+                if (lines == 55) {
+                    if (columns == 0) {
+                        addAnyObject = true;
+                        sb.append("L");
+                    } else if (columns == 60) {
+                        sb.append("R");
+                        addAnyObject = true;
+                    }
+                }
+            }
+            addAnyObject = false;
+            alreadyOneObjectInLine = false;
+            sb.append(" \s\n");
+        }
+        return sb.toString();
+    }
+
 
     private void spawnGameObjects() {
         spawnGameObject(statusBar);
@@ -161,6 +207,23 @@ class GameWorldManager extends GamePlayManager {
                     } else {
                         spawnGameObject(fuelItem);
                     }
+                } else if (character == 'T') {
+                    Tank tank = new Tank(gameView, this);
+                    tank.getPosition().updateCoordinates(x, y);
+                    tank.initializeTheSpawnPoint(columnIndex < 40);
+                    if (lineIndex < worldOffsetLines) {
+                        addActivatableGameObject(tank);
+                    } else {
+                        spawnGameObject(tank);
+                    }
+                } else if (character == 'X') {
+                    Bridge bridge = new Bridge(gameView, this);
+                    bridge.getPosition().updateCoordinates(x - 3, y - 8);
+                    if (lineIndex < worldOffsetLines) {
+                        addActivatableGameObject(bridge);
+                    } else {
+                        spawnGameObject(bridge);
+                    }
                 } else if (character == 'L') {
                     BridgeLeft bridgeLeft = new BridgeLeft(gameView, this);
                     jetFighter.addPathDecisionObjects(bridgeLeft);
@@ -173,7 +236,7 @@ class GameWorldManager extends GamePlayManager {
                 } else if (character == 'R') {
                     BridgeRight bridgeRight = new BridgeRight(gameView, this);
                     jetFighter.addPathDecisionObjects(bridgeRight);
-                    bridgeRight.getPosition().updateCoordinates(x, y);
+                    bridgeRight.getPosition().updateCoordinates(x - 3, y);
                     if (lineIndex < worldOffsetLines) {
                         addActivatableGameObject(bridgeRight);
                     } else {
@@ -209,10 +272,19 @@ class GameWorldManager extends GamePlayManager {
                     spawnGameObject(helicopter);
                     iterator.remove();
                 }
-
             } else if (gameObject instanceof GreyJet greyJet) {
                 if (greyJet.tryToActivate(jetFighter)) {
                     spawnGameObject(greyJet);
+                    iterator.remove();
+                }
+            } else if (gameObject instanceof Tank tank) {
+                if (tank.tryToActivate(jetFighter)) {
+                    spawnGameObject(tank);
+                    iterator.remove();
+                }
+            } else if (gameObject instanceof Bridge bridge) {
+                if (bridge.tryToActivate(jetFighter)) {
+                    spawnGameObject(bridge);
                     iterator.remove();
                 }
             } else if (gameObject instanceof BridgeLeft bridgeLeft) {

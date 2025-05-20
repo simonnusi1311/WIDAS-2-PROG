@@ -4,7 +4,6 @@ import thd.game.utilities.GameView;
 import thd.gameobjects.base.GameObject;
 import thd.gameobjects.movable.*;
 import thd.gameobjects.unmovable.StatusBar;
-
 import java.util.Random;
 
 /**
@@ -17,7 +16,6 @@ import java.util.Random;
 public class GamePlayManager extends WorldShiftManager {
     private final GameObjectManager gameObjectManager;
     private final Random random;
-    private static final int LIVES = 3;
     protected int points;
     protected int lives;
     private int levelCounterForBridge;
@@ -27,7 +25,6 @@ public class GamePlayManager extends WorldShiftManager {
         super(gameView);
         gameObjectManager = new GameObjectManager();
         random = new Random();
-        lives = LIVES;
     }
 
     /**
