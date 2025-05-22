@@ -146,6 +146,23 @@ class GameWorldManager extends GamePlayManager {
                     } else {
                         spawnGameObject(bridgeRight);
                     }
+                } else if (character == 'Y') {
+                    RadioTower radioTower = new RadioTower(gameView, this);
+                    radioTower.getPosition().updateCoordinates(x, y);
+                    if (lineIndex < level.worldOffsetLines) {
+                        addActivatableGameObject(radioTower);
+                    } else {
+                        spawnGameObject(radioTower);
+                    }
+                } else if (character == 'Z') {
+                    RocketLaunch rocketLaunch = new RocketLaunch(gameView, this);
+                    rocketLaunch.getPosition().updateCoordinates(x, y);
+                    rocketLaunch.initializeTheSpawnPoint(columnIndex < 40);
+                    if (lineIndex < level.worldOffsetLines) {
+                        addActivatableGameObject(rocketLaunch);
+                    } else {
+                        spawnGameObject(rocketLaunch);
+                    }
                 }
             }
         }
@@ -199,6 +216,16 @@ class GameWorldManager extends GamePlayManager {
             } else if (gameObject instanceof BridgeRight bridgeRight) {
                 if (bridgeRight.tryToActivate(jetFighter)) {
                     spawnGameObject(bridgeRight);
+                    iterator.remove();
+                }
+            } else if (gameObject instanceof RadioTower radioTower) {
+                if (radioTower.tryToActivate(jetFighter)) {
+                    spawnGameObject(radioTower);
+                    iterator.remove();
+                }
+            } else if (gameObject instanceof RocketLaunch rocketLaunch) {
+                if (rocketLaunch.tryToActivate(jetFighter)) {
+                    spawnGameObject(rocketLaunch);
                     iterator.remove();
                 }
             }

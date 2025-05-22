@@ -5,7 +5,7 @@ public class Level1 extends Level {
     public Level1() {
         name = "LevelOne";
         number = 1;
-        world = fillTheWorldStringWithObjects();
+        world = fillTheWorldStringWithObjects2();
         worldOffsetColumns = 0;
         worldOffsetLines = 44;
         output();
