@@ -31,11 +31,11 @@ public class BridgeLeft extends CollidingGameObject implements ShiftableGameObje
         position.updateCoordinates(0, -74);
         speedInPixel = 1.3;
         rotation = 0;
-        width = (GameView.WIDTH / 2.0) - 48;
+        width = (GameView.WIDTH / 2.0)-55;
         height = 65;
         size = 40;
         hitBoxOffsets(0, 0, 0, 0);
-        distanceToBackground = 1;
+        distanceToBackground = 2;
     }
 
     @Override

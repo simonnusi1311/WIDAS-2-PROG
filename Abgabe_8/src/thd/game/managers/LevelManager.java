@@ -7,7 +7,7 @@ import thd.gameobjects.base.CollidingGameObject;
 
 import java.util.List;
 
-public class LevelManager extends GameWorldManager {
+class LevelManager extends GameWorldManager {
     private List<Level> levels;
     private static final int LIVES = 3;
 

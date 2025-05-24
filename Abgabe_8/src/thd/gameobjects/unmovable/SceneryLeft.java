@@ -28,7 +28,7 @@ public class SceneryLeft extends CollidingGameObject {
         super(gameView, gamePlayManager);
         position.updateCoordinates(0, 0);
         rotation = 0;
-        width = 220;
+        width = 100;
         height = 654;
         size = 40;
         hitBoxOffsets(0, 0, -3, 0);

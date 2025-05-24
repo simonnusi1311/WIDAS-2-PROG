@@ -49,6 +49,6 @@ public class SceneryRight extends CollidingGameObject {
      */
     @Override
     public void addToCanvas() {
-        gameView.addRectangleToCanvas(GameView.WIDTH - 220, position.getY(), width, height, 3, true, Color.GREEN.darker());
+        gameView.addRectangleToCanvas(GameView.WIDTH - 100, position.getY(), width, height, 3, true, Color.GREEN.darker());
     }
 }

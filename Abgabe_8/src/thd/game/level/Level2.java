@@ -1,7 +1,14 @@
 package thd.game.level;
 
+/**
+ * The second level of the game.
+ */
 public class Level2 extends Level {
 
+    /**
+     * Creates the second level with its name, number, world layout,
+     * and enemies.
+     */
     public Level2() {
         name = "LevelTwo";
         number = 2;
@@ -61,7 +68,7 @@ public class Level2 extends Level {
                                                                                                                                                                 \s
                                                                                                                                                                \s
                                                                                                                                                                  \s
-                L                                                                  R                                                                            \s""";
+                                                                                                                                                                \s""";
         worldOffsetColumns = 0;
         worldOffsetLines = 44;
 

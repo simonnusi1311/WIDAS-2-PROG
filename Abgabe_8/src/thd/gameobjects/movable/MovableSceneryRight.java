@@ -6,37 +6,39 @@ import thd.gameobjects.base.ActivatableGameObject;
 import thd.gameobjects.base.CollidingGameObject;
 import thd.gameobjects.base.Position;
 import thd.gameobjects.base.ShiftableGameObject;
+import thd.gameobjects.unmovable.SceneryLeft;
+import thd.gameobjects.unmovable.SceneryRight;
 
 import java.awt.*;
 
-
 /**
- * Shows the street on the right side of the bridge.
- * It separates the current level with the next section.
+ * Represents the right border in the {@link GameView} window.
+ * The border is a movable object that has different properties,
+ * such as speed and size. The position is defined by the
+ * x and y coordinates from {@link Position}
  *
  * @see GameView
  * @see Position
  */
 
-public class BridgeRight extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
+public class MovableSceneryRight extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
 
     /**
-     * Creates the Bridge street on the right side.
+     * Creates a new right border Scenery
      *
-     * @param gameView        The GameView object where the scenery will be displayed.
+     * @param gameView        The gaming window where the helicopter will be displayed.
      * @param gamePlayManager The main gameplay logic.
      */
 
-    public BridgeRight(GameView gameView, GamePlayManager gamePlayManager) {
+    public MovableSceneryRight(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        position.updateCoordinates((GameView.WIDTH / 2.0) + 95, -74);
         speedInPixel = 1.3;
+        size = 0.80;
         rotation = 0;
-        width = (GameView.WIDTH / 2.0) - 42;
-        height = 65;
-        size = 40;
-        hitBoxOffsets(0, 0, -3, 0);
-        distanceToBackground = 2;
+        width = 100;
+        height = 50;
+        hitBoxOffsets(0, 0, 0, 0);
+        distanceToBackground = 1;
     }
 
     @Override
@@ -48,9 +50,7 @@ public class BridgeRight extends CollidingGameObject implements ShiftableGameObj
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
-        if (other instanceof JetFighter jetFighter) {
-            gamePlayManager.destroyGameObject(jetFighter);
-        }
+
     }
 
     /**
@@ -72,13 +72,12 @@ public class BridgeRight extends CollidingGameObject implements ShiftableGameObj
      */
     @Override
     public void addToCanvas() {
-        gameView.addRectangleToCanvas(position.getX(), position.getY(), width, height, 3, true, Color.GRAY.brighter());
-        gameView.addRectangleToCanvas(position.getX(), position.getY() + 28, width, 3, 3, true, Color.YELLOW.darker());
-        gameView.addRectangleToCanvas(position.getX(), position.getY() + 37, width, 3, 3, true, Color.YELLOW.darker());
+        gameView.addRectangleToCanvas(position.getX(), position.getY(), width, height, 3, true, Color.GREEN.darker());
     }
 
     @Override
     public boolean tryToActivate(JetFighter info) {
-        return position.getY() < info.getPosition().getY() + ACTIVATION_DISTANCE;
+        return getPosition().getY() < info.getPosition().getY() + ACTIVATION_DISTANCE;
     }
 }
+

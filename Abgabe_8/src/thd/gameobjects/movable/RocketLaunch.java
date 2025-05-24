@@ -71,6 +71,12 @@ public class RocketLaunch extends GameObject implements ShiftableGameObject, Act
         }
     }
 
+    /**
+     * Determines whether the object is display on the left or right side,
+     * based on the colum from the GameWorldManger.
+     *
+     * @param spawnedLeft true if the object spawns on the left side, false if right side.
+     */
     public void initializeTheSpawnPoint(boolean spawnedLeft) {
         this.spawnedLeft = spawnedLeft;
     }

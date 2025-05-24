@@ -1,6 +1,5 @@
 package thd.game.level;
 
-import javax.swing.*;
 import java.util.Random;
 
 /**
@@ -8,15 +7,26 @@ import java.util.Random;
  */
 public class Level {
 
+    /**
+     * Level name from the different levels.
+     */
     public String name;
+    /**
+     * Level number from the different levels.
+     */
     public int number;
+    /**
+     * String representation of a level.
+     */
     public String world;
+    /**
+     * World Offset Column from a level.
+     */
     public int worldOffsetColumns;
+    /**
+     * World Offset Lines from a level.
+     */
     public int worldOffsetLines;
-
-    public Level() {
-        fillTheWorldStringWithObjects2();
-    }
 
     protected String fillTheWorldStringWithObjects2() {
         Random random = new Random();
@@ -62,7 +72,6 @@ public class Level {
             alreadyOneObjectInLine = false;
             sb.append("\n");
         }
-        System.out.println(sb);
         return sb.toString();
     }
 

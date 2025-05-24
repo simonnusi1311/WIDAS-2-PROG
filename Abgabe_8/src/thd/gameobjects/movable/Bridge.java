@@ -21,6 +21,7 @@ import java.awt.*;
 public class Bridge extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final BridgeMovementPattern bridgeMovementPattern;
     private int counterForLevel;
+    private State currentState;
 
 
     /**
@@ -41,7 +42,12 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
         height = 75;
         counterForLevel = 1;
         hitBoxOffsets(4, 10, 0, -5);
-        distanceToBackground = 2;
+        distanceToBackground = 3;
+        currentState = State.STANDARD;
+    }
+
+    private enum State {
+        STANDARD, DAMAGED, EXPLODING, EXPLODED
     }
 
     @Override
@@ -49,6 +55,16 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
         if (gameObjectHitsLowerBoundary()) {
             counterForLevel++;
             gamePlayManager.destroyGameObject(this);
+        }
+        switch (currentState) {
+            case STANDARD:
+
+            case DAMAGED:
+
+            case EXPLODING:
+
+            case EXPLODED:
+
         }
     }
 
