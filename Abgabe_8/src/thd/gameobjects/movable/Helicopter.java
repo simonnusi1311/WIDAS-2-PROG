@@ -59,7 +59,9 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
             gamePlayManager.lifeLost();
             gamePlayManager.destroyGameObject(this);
         }
-        if (other instanceof SceneryLeft || other instanceof SceneryRight) {
+        if (other instanceof SceneryLeft || other instanceof SceneryRight || other instanceof MovableSceneryRight
+                || other instanceof MovableSceneryLeft || other instanceof BigIsland
+                || other instanceof SmallIsland || other instanceof MovableSceneryFill) {
             helicopterMovementPattern.changeDirectionIfObjectHitsBoundary();
         }
     }

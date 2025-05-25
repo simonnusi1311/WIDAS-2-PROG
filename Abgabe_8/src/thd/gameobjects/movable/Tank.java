@@ -2,10 +2,7 @@ package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
-import thd.gameobjects.base.ActivatableGameObject;
-import thd.gameobjects.base.GameObject;
-import thd.gameobjects.base.Position;
-import thd.gameobjects.base.ShiftableGameObject;
+import thd.gameobjects.base.*;
 
 /**
  * Represents an enemy tank in the {@link GameView} window.
@@ -17,10 +14,11 @@ import thd.gameobjects.base.ShiftableGameObject;
  * @see Position
  */
 
-public class Tank extends GameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
+public class Tank extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final TankMovementPattern tankMovementPattern;
     private ShootFromTank shootFromTank;
     private boolean shotIsActive;
+    private boolean stopHorizontalMovement;
 
     /**
      * Creates a new ship object with default position, speed, size and other properties.
@@ -39,16 +37,14 @@ public class Tank extends GameObject implements ShiftableGameObject, Activatable
         height = 33;
         distanceToBackground = 2;
         shotIsActive = false;
+        stopHorizontalMovement = false;
     }
 
     @Override
-    protected boolean gameObjectHitsLeftBoundary() {
-        return position.getX() >= 175;
-    }
-
-    @Override
-    protected boolean gameObjectHitsRightBoundary() {
-        return position.getX() <= GameView.WIDTH - 220;
+    public void reactToCollisionWith(CollidingGameObject other) {
+        if (other instanceof SpecialBorderForTank) {
+            stopHorizontalMovement = true;
+        }
     }
 
     @Override
@@ -60,9 +56,7 @@ public class Tank extends GameObject implements ShiftableGameObject, Activatable
     }
 
     private void shootOnPlayer() {
-        boolean tankHitsRightOrLeftBoundary = (gameObjectHitsLeftBoundary() && tankMovementPattern.movingRight)
-                || (gameObjectHitsRightBoundary() && !tankMovementPattern.movingRight);
-        if (tankHitsRightOrLeftBoundary && !shotIsActive) {
+        if (stopHorizontalMovement && !shotIsActive) {
             shootFromTank = new ShootFromTank(gameView, gamePlayManager, this);
             double shootXCoordinate = tankMovementPattern.movingRight ? position.getX() + 38 : position.getX() - 8;
             shootFromTank.updateTheStartPositionFromShoot(shootXCoordinate, position.getY() + 10);
@@ -98,9 +92,12 @@ public class Tank extends GameObject implements ShiftableGameObject, Activatable
     }
 
     private void moveHorizontally() {
-        if (tankMovementPattern.movingRight && !gameObjectHitsLeftBoundary()) {
+        if (stopHorizontalMovement) {
+            return;
+        }
+        if (tankMovementPattern.movingRight) {
             position.right(speedInPixel);
-        } else if (!tankMovementPattern.movingRight && !gameObjectHitsRightBoundary()) {
+        } else {
             position.left(speedInPixel);
         }
     }

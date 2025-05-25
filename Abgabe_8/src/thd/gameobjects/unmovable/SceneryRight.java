@@ -31,7 +31,7 @@ public class SceneryRight extends CollidingGameObject {
         width = 220;
         height = 654;
         size = 40;
-        hitBoxOffsets(3, 0, 0, 0);
+        hitBoxOffsets(120, 0, 0, 0);
         distanceToBackground = 0;
     }
 

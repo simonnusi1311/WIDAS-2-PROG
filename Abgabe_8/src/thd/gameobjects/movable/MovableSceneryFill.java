@@ -10,31 +10,31 @@ import thd.gameobjects.base.ShiftableGameObject;
 import java.awt.*;
 
 /**
- * Represents the right border in the {@link GameView} window.
+ * Represents the left border in the {@link GameView} window.
  * The border is a movable object that has different properties,
  * such as speed and size. The position is defined by the
- * x and y coordinates from {@link Position}.
+ * x and y coordinates from {@link Position}
  *
  * @see GameView
  * @see Position
  */
 
-public class MovableSceneryRight extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
+public class MovableSceneryFill extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
 
     /**
-     * Creates a new right border Scenery.
+     * Creates a new left border Scenery.
      *
      * @param gameView        The gaming window where the helicopter will be displayed.
      * @param gamePlayManager The main gameplay logic.
      */
 
-    public MovableSceneryRight(GameView gameView, GamePlayManager gamePlayManager) {
+    public MovableSceneryFill(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
         speedInPixel = 1.3;
         size = 0.80;
         rotation = 0;
-        width = 500;
-        height = 50;
+        width = 600;
+        height = 200;
         hitBoxOffsets(0, 0, 0, 0);
         distanceToBackground = 1;
     }

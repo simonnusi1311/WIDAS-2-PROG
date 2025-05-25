@@ -13,7 +13,7 @@ import java.awt.*;
  * Represents the left border in the {@link GameView} window.
  * The border is a movable object that has different properties,
  * such as speed and size. The position is defined by the
- * x and y coordinates from {@link Position}
+ * x and y coordinates from {@link Position}.
  *
  * @see GameView
  * @see Position
@@ -22,7 +22,7 @@ import java.awt.*;
 public class MovableSceneryLeft extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
 
     /**
-     * Creates a new left border Scenery
+     * Creates a new left border Scenery.
      *
      * @param gameView        The gaming window where the helicopter will be displayed.
      * @param gamePlayManager The main gameplay logic.

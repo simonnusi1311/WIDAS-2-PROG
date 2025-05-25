@@ -52,7 +52,6 @@ class GameWorldManager extends GamePlayManager {
         clearListsForPathDecisionsInGameObjects();
         spawnGameObjects();
         spawnGameObjectsFromWorldString();
-
     }
 
     private void clearListsForPathDecisionsInGameObjects() {
@@ -138,7 +137,7 @@ class GameWorldManager extends GamePlayManager {
                     }
                 } else if (character == 'R') {
                     BridgeRight bridgeRight = new BridgeRight(gameView, this);
-                    bridgeRight.getPosition().updateCoordinates(x + 17, y);
+                    bridgeRight.getPosition().updateCoordinates(x - 6, y);
                     pathDecisionObjects.add(bridgeRight);
                     if (lineIndex < level.worldOffsetLines) {
                         addActivatableGameObject(bridgeRight);
@@ -174,6 +173,7 @@ class GameWorldManager extends GamePlayManager {
                 } else if (character == 'C') {
                     MovableSceneryLeft movableSceneryLeft = new MovableSceneryLeft(gameView, this);
                     movableSceneryLeft.getPosition().updateCoordinates(x, y);
+                    jetFighter.addPathDecisionObjects(movableSceneryLeft);
                     if (lineIndex < level.worldOffsetLines) {
                         addActivatableGameObject(movableSceneryLeft);
                     } else {
@@ -182,18 +182,46 @@ class GameWorldManager extends GamePlayManager {
                 } else if (character == 'E') {
                     MovableSceneryRight movableSceneryRight = new MovableSceneryRight(gameView, this);
                     movableSceneryRight.getPosition().updateCoordinates(x, y);
+                    jetFighter.addPathDecisionObjects(movableSceneryRight);
                     if (lineIndex < level.worldOffsetLines) {
                         addActivatableGameObject(movableSceneryRight);
                     } else {
                         spawnGameObject(movableSceneryRight);
                     }
                 } else if (character == 'I') {
-                    MovableOvalLeft movableOvalLeft = new MovableOvalLeft(gameView, this);
-                    movableOvalLeft.getPosition().updateCoordinates(x, y);
+                    MovableSceneryFill movableSceneryFill = new MovableSceneryFill(gameView, this);
+                    movableSceneryFill.getPosition().updateCoordinates(x - 400, y);
+                    jetFighter.addPathDecisionObjects(movableSceneryFill);
                     if (lineIndex < level.worldOffsetLines) {
-                        addActivatableGameObject(movableOvalLeft);
+                        addActivatableGameObject(movableSceneryFill);
                     } else {
-                        spawnGameObject(movableOvalLeft);
+                        spawnGameObject(movableSceneryFill);
+                    }
+                } else if (character == 'W') {
+                    SpecialBorderForTank specialBorderForTank = new SpecialBorderForTank(gameView, this);
+                    specialBorderForTank.getPosition().updateCoordinates(x, y);
+                    if (lineIndex < level.worldOffsetLines) {
+                        addActivatableGameObject(specialBorderForTank);
+                    } else {
+                        spawnGameObject(specialBorderForTank);
+                    }
+                } else if (character == 'V') {
+                    BigIsland bigIsland = new BigIsland(gameView, this);
+                    bigIsland.getPosition().updateCoordinates(x, y);
+                    jetFighter.addPathDecisionObjects(bigIsland);
+                    if (lineIndex < level.worldOffsetLines) {
+                        addActivatableGameObject(bigIsland);
+                    } else {
+                        spawnGameObject(bigIsland);
+                    }
+                } else if (character == 'U') {
+                    SmallIsland smallIsland = new SmallIsland(gameView, this);
+                    smallIsland.getPosition().updateCoordinates(x, y);
+                    jetFighter.addPathDecisionObjects(smallIsland);
+                    if (lineIndex < level.worldOffsetLines) {
+                        addActivatableGameObject(smallIsland);
+                    } else {
+                        spawnGameObject(smallIsland);
                     }
                 }
             }
@@ -275,9 +303,19 @@ class GameWorldManager extends GamePlayManager {
                     spawnGameObject(movableSceneryRight);
                     iterator.remove();
                 }
-            } else if (gameObject instanceof MovableOvalLeft movableOvalLeft) {
-                if (movableOvalLeft.tryToActivate(jetFighter)) {
-                    spawnGameObject(movableOvalLeft);
+            } else if (gameObject instanceof MovableSceneryFill movableSceneryFill) {
+                if (movableSceneryFill.tryToActivate(jetFighter)) {
+                    spawnGameObject(movableSceneryFill);
+                    iterator.remove();
+                }
+            } else if (gameObject instanceof SpecialBorderForTank specialBorderForTank) {
+                if (specialBorderForTank.tryToActivate(jetFighter)) {
+                    spawnGameObject(specialBorderForTank);
+                    iterator.remove();
+                }
+            } else if (gameObject instanceof BigIsland bigIsland) {
+                if (bigIsland.tryToActivate(jetFighter)) {
+                    spawnGameObject(bigIsland);
                     iterator.remove();
                 }
             }

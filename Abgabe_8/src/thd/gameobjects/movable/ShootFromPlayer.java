@@ -29,7 +29,8 @@ class ShootFromPlayer extends CollidingGameObject {
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof Balloon || other instanceof Bridge || other instanceof FuelItem || other instanceof GreyJet
-                || other instanceof Helicopter || other instanceof Ship || other instanceof BridgeLeft || other instanceof BridgeRight) {
+                || other instanceof Helicopter || other instanceof Ship || other instanceof BridgeLeft || other instanceof BridgeRight
+                || other instanceof SmallIsland || other instanceof BigIsland || other instanceof MovableSceneryRight || other instanceof MovableSceneryLeft) {
             gamePlayManager.destroyGameObject(this);
         }
     }

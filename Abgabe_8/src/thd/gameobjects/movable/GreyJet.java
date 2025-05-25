@@ -77,7 +77,7 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
      */
     @Override
     public void updatePosition() {
-        position.down(1.0);
+        position.down(1.3);
         greyJetMovementPattern.gamingObjectCanMoveHorizontal(this);
         teleportToOppositeSide();
     }

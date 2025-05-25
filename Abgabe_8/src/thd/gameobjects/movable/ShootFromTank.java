@@ -5,8 +5,6 @@ import thd.game.utilities.GameView;
 import thd.gameobjects.base.CollidingGameObject;
 import thd.gameobjects.base.Position;
 import thd.gameobjects.base.ShiftableGameObject;
-import thd.gameobjects.unmovable.SceneryLeft;
-import thd.gameobjects.unmovable.SceneryRight;
 
 /**
  * The class which contains the white shoot from the tank.
@@ -43,9 +41,6 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
         if (other instanceof JetFighter) {
             gamePlayManager.destroyGameObject(this);
             gamePlayManager.lifeLost();
-        }
-        if (other instanceof SceneryLeft || other instanceof SceneryRight) {
-            gamePlayManager.destroyGameObject(this);
         }
     }
 
