@@ -57,14 +57,14 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
             gamePlayManager.destroyGameObject(this);
         }
         switch (currentState) {
-            case STANDARD:
-
-            case DAMAGED:
-
-            case EXPLODING:
-
-            case EXPLODED:
-
+            case STANDARD -> {
+            }
+            case EXPLODING -> {
+            }
+            case DAMAGED -> {
+            }
+            case EXPLODED -> {
+            }
         }
     }
 

@@ -47,9 +47,7 @@ public class BridgeLeft extends CollidingGameObject implements ShiftableGameObje
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
-        if (other instanceof JetFighter jetFighter) {
-            gamePlayManager.destroyGameObject(jetFighter);
-        }
+
     }
 
     /**
