@@ -19,7 +19,7 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
     private ShootFromTank shootFromTank;
     private boolean shotIsActive;
     private boolean stopHorizontalMovement;
-    private State currentState;
+    private TankAnimationState tankAnimationState;
 
 
     /**
@@ -40,12 +40,32 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
         distanceToBackground = 2;
         shotIsActive = false;
         stopHorizontalMovement = false;
-        currentState = State.STANDARD;
+        tankAnimationState = TankAnimationState.RIGHT;
     }
 
-    private enum State {
-        STANDARD, LEFT, RIGHT
+    private enum TankAnimationState {
+        RIGHT("tank.png"), RIGHT_CHANGE("tank_change_right.png"),
+        LEFT("tank_left.png"), LEFT_CHANGE("tank_change_left.png");
+
+        private final String image;
+
+        TankAnimationState(String image) {
+            this.image = image;
+        }
+
+        private TankAnimationState nextRight() {
+            return this == RIGHT ? RIGHT_CHANGE : RIGHT;
+        }
+
+        private TankAnimationState nextLeft() {
+            return this == LEFT ? LEFT_CHANGE : LEFT;
+        }
+
+        private String getImage() {
+            return image;
+        }
     }
+
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
@@ -60,12 +80,11 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
             gamePlayManager.destroyGameObject(this);
         }
         shootOnPlayer();
-        switch (currentState) {
-            case STANDARD -> {
-            }
-            case LEFT -> {
-            }
-            case RIGHT -> {
+        if (!stopHorizontalMovement && gameView.timer(80, 0, this)) {
+            if (tankMovementPattern.movingRight) {
+                tankAnimationState = tankAnimationState.nextRight();
+            } else {
+                tankAnimationState = tankAnimationState.nextLeft();
             }
         }
     }
@@ -110,11 +129,7 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
         if (stopHorizontalMovement) {
             return;
         }
-        if (tankMovementPattern.movingRight) {
-            position.right(speedInPixel);
-        } else {
-            position.left(speedInPixel);
-        }
+        tankMovementPattern.gamingObjectCanMoveHorizontal(this);
     }
 
 
@@ -137,12 +152,7 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
      */
     @Override
     public void addToCanvas() {
-        if (tankMovementPattern.movingRight) {
-            gameView.addImageToCanvas("tank.png", position.getX(), position.getY(), size, 0);
-        }
-        if (!tankMovementPattern.movingRight) {
-            gameView.addImageToCanvas("tank_left.png", position.getX(), position.getY(), size, 0);
-        }
+        gameView.addImageToCanvas(tankAnimationState.getImage(), position.getX(), position.getY(), size, 0);
     }
 
     @Override

@@ -8,6 +8,9 @@ import thd.gameobjects.base.Position;
 
 class ShootFromPlayer extends CollidingGameObject {
 
+    private ShootAnimationState shootAnimationState;
+    private boolean triggerAnimation;
+
     ShootFromPlayer(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
         position.updateCoordinates(0, 0);
@@ -17,6 +20,28 @@ class ShootFromPlayer extends CollidingGameObject {
         width = 1;
         height = 5;
         hitBoxOffsets(0, 0, 0, 8);
+        shootAnimationState = ShootAnimationState.SHOOT_ANIMATION_1;
+        triggerAnimation = false;
+    }
+
+    private enum ShootAnimationState {
+        SHOOT_ANIMATION_1("shoot_animation_1.png"),
+        SHOOT_ANIMATION_2("shoot_animation_2.png"),
+        SHOOT_ANIMATION_3("shoot_animation_3.png");
+
+        private final String image;
+
+        ShootAnimationState(String image) {
+            this.image = image;
+        }
+
+        private ShootAnimationState next() {
+            return values()[(ordinal() + 1) % values().length];
+        }
+
+        public String getImage() {
+            return image;
+        }
     }
 
     @Override
@@ -24,13 +49,16 @@ class ShootFromPlayer extends CollidingGameObject {
         if (shootHitsUpperBoundary()) {
             gamePlayManager.destroyGameObject(this);
         }
+
     }
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
-        if (other instanceof Balloon || other instanceof Bridge || other instanceof FuelItem || other instanceof GreyJet
-                || other instanceof Helicopter || other instanceof Ship || other instanceof BridgeLeft || other instanceof BridgeRight
-                || other instanceof SmallIsland || other instanceof BigIsland || other instanceof MovableSceneryRight || other instanceof MovableSceneryLeft) {
+
+        if (other instanceof MovableSceneryLeft || other instanceof MovableSceneryRight || other instanceof BigIsland) {
+            triggerAnimation = true;
+            speedInPixel = 0;
+        } else {
             gamePlayManager.destroyGameObject(this);
         }
     }

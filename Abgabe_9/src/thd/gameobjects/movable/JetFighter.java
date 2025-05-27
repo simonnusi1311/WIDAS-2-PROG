@@ -3,6 +3,7 @@ package thd.gameobjects.movable;
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
 import thd.gameobjects.base.CollidingGameObject;
+import thd.gameobjects.base.ExplosionState;
 import thd.gameobjects.base.MainCharacter;
 import thd.gameobjects.base.Position;
 
@@ -25,7 +26,11 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
     private boolean collisionWithFuelItem;
     private boolean increaseTheSpeed;
     private final RedFuelBar redFuelBar;
-
+    private FlyingState flyingState;
+    private final JetFighterState jetFighterState;
+    private SpeedingState speedingState;
+    private boolean isFlyingRight;
+    private boolean isFlyingLeft;
 
     /**
      * Creates a new jet fighter object with position, speed, size and other properties.
@@ -48,21 +53,49 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         collidingGameObjectsForPathDecision = new LinkedList<>();
         distanceToBackground = 4;
         this.redFuelBar = redFuelBar;
+        flyingState = FlyingState.FLYING_STANDARD;
+        jetFighterState = JetFighterState.FLYING;
+        speedingState = SpeedingState.FLYING_1;
+    }
+
+    private enum JetFighterState {
+        FLYING, DAMAGED, EXPLODING, SPEEDING
     }
 
     private enum FlyingState {
-        FLYING_STANDARD("jet_fighter"),
-        FLYING_LEFT("jet_fighter_left"),
-        FLYING_RIGHT("jet_fighter_right");
+        FLYING_STANDARD("jet_fighter.png"),
+        FLYING_LEFT("jet_fighter_left.png"),
+        FLYING_RIGHT("jet_fighter_right.png");
 
-        private final String display;
+        private final String image;
 
-        FlyingState(String display) {
-            this.display = display;
+        FlyingState(String image) {
+            this.image = image;
         }
 
-
+        private String getImage() {
+            return image;
+        }
     }
+
+    private enum SpeedingState {
+        FLYING_1("exhaust_one.png"),
+        FLYING_2("exhaust_two.png");
+
+        private final String image;
+
+        SpeedingState(String image) {
+            this.image = image;
+        }
+
+        private SpeedingState next() {
+            return values()[(ordinal() + 1) % values().length];
+        }
+
+        private String getImage() {
+            return image;
+        }
+        }
 
     /**
      * The jet moves the left by the given number of pixels.
@@ -71,6 +104,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      */
     public void left() {
         position.left(speedInPixel);
+        isFlyingLeft = true;
         for (CollidingGameObject collidingGameObject : collidingGameObjectsForPathDecision) {
             if (collidesWith(collidingGameObject)) {
                 position.right(speedInPixel);
@@ -86,6 +120,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      */
     public void right() {
         position.right(speedInPixel);
+        isFlyingRight = true;
         for (CollidingGameObject collidingGameObject : collidingGameObjectsForPathDecision) {
             if (collidesWith(collidingGameObject)) {
                 position.left(speedInPixel);
@@ -166,6 +201,28 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
             gamePlayManager.moveWorldDown(1.3);
             redFuelBar.getPosition().left(0.10);
         }
+        switch (jetFighterState) {
+            case FLYING -> {
+                if (increaseTheSpeed && gameView.timer(100, 0, this)) {
+                    speedingState = speedingState.next();
+                }
+                if (isFlyingRight) {
+                    flyingState = FlyingState.FLYING_RIGHT;
+                } else if (isFlyingLeft) {
+                    flyingState = FlyingState.FLYING_LEFT;
+                } else {
+                    flyingState = FlyingState.FLYING_STANDARD;
+                }
+            }
+            case DAMAGED -> {
+
+            }
+            case EXPLODING -> {
+
+            }
+        }
+        isFlyingLeft = false;
+        isFlyingRight = false;
     }
 
     /**
@@ -177,6 +234,9 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      */
     @Override
     public void addToCanvas() {
-        gameView.addImageToCanvas("jet_fighter.png", position.getX(), position.getY(), size, 0);
+        if (increaseTheSpeed) {
+            gameView.addImageToCanvas(speedingState.getImage(), position.getX() - 82.5, position.getY() - 9, 0.2, 0);
+        }
+        gameView.addImageToCanvas(flyingState.getImage(), position.getX(), position.getY(), size, 0);
     }
 }

@@ -2,10 +2,7 @@ package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
-import thd.gameobjects.base.ActivatableGameObject;
-import thd.gameobjects.base.CollidingGameObject;
-import thd.gameobjects.base.Position;
-import thd.gameobjects.base.ShiftableGameObject;
+import thd.gameobjects.base.*;
 import thd.gameobjects.unmovable.SceneryLeft;
 import thd.gameobjects.unmovable.SceneryRight;
 
@@ -21,7 +18,9 @@ import thd.gameobjects.unmovable.SceneryRight;
 
 public class Helicopter extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final HelicopterMovementPattern helicopterMovementPattern;
-    private State currentState;
+    private HelicopterAnimationState helicopterAnimationState;
+    private HelicopterState helicopterState;
+    private ExplosionState explosionState;
 
     /**
      * Creates a new helicopter object with random position, speed, size and other properties.
@@ -41,11 +40,32 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
         height = 26;
         hitBoxOffsets(8, 3, -6, 0);
         distanceToBackground = 2;
-        currentState = State.STANDARD;
+        helicopterAnimationState = HelicopterAnimationState.RIGHT;
+        helicopterState = HelicopterState.FLYING;
+        explosionState = ExplosionState.EXPLOSION_1;
     }
 
-    private enum State {
-        STANDARD, DAMAGED, EXPLODING, LEFT, RIGHT
+    private enum HelicopterState {
+        FLYING, DAMAGED, EXPLODING
+    }
+
+    private enum HelicopterAnimationState {
+        RIGHT("helicopter.png"), RIGHT_CHANGE("helicopter_change_right.png"),
+        LEFT("helicopter_left.png"), LEFT_CHANGE("helicopter_change_left.png");
+
+        private final String image;
+
+        HelicopterAnimationState(String image) {
+            this.image = image;
+        }
+
+        private HelicopterAnimationState nextRight() {
+            return this == RIGHT ? RIGHT_CHANGE : RIGHT;
+        }
+
+        private HelicopterAnimationState nextLeft() {
+            return this == LEFT ? LEFT_CHANGE : LEFT;
+        }
     }
 
     @Override
@@ -53,17 +73,37 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
         if (gameObjectHitsLowerBoundary()) {
             gamePlayManager.destroyGameObject(this);
         }
-        switch (currentState) {
-            case STANDARD -> {
+        switch (helicopterState) {
+            case FLYING -> {
+                if (gameView.timer(10, 0, this)) {
+                    if (helicopterMovementPattern.movingRight) {
+                        helicopterAnimationState = helicopterAnimationState.nextRight();
+                    } else {
+                        helicopterAnimationState = helicopterAnimationState.nextLeft();
+                    }
+                }
             }
-            case DAMAGED -> {
-            }
-            case LEFT -> {
-            }
-            case RIGHT -> {
-            }
+
+
             case EXPLODING -> {
+                stopMovingHorizontallyIfExploded();
+                if (gameView.timer(100, 0, this)) {
+                    if (explosionState == ExplosionState.EXPLOSION_3) {
+                        gamePlayManager.destroyGameObject(this);
+                    } else {
+                        explosionState = explosionState.next();
+                    }
+                }
             }
+        }
+    }
+
+    private void stopMovingHorizontallyIfExploded() {
+        if (helicopterMovementPattern.movingRight) {
+            position.left(speedInPixel);
+        }
+        if (!helicopterMovementPattern.movingRight) {
+            position.right(speedInPixel);
         }
     }
 
@@ -71,7 +111,7 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(60);
-            gamePlayManager.destroyGameObject(this);
+            helicopterState = HelicopterState.EXPLODING;
         }
         if (other instanceof JetFighter) {
             gamePlayManager.lifeLost();
@@ -104,11 +144,12 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
      */
     @Override
     public void addToCanvas() {
-        if (helicopterMovementPattern.movingRight) {
-            gameView.addImageToCanvas("helicopter.png", position.getX(), position.getY(), size, 0);
+        if (helicopterState == HelicopterState.EXPLODING) {
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX() - 12, position.getY() - 12, size, 0);
         } else {
-            gameView.addImageToCanvas("helicopter_left.png", position.getX(), position.getY(), size, 0);
+            gameView.addImageToCanvas(helicopterAnimationState.image, position.getX(), position.getY(), size, 0);
         }
+
     }
 
     @Override
