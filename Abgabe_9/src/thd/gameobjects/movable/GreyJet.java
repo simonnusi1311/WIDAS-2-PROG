@@ -40,7 +40,8 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
         hitBoxOffsets(5, 3, -5, -8);
         distanceToBackground = 4;
         currentState = State.FLYING;
-        greyJetAnimationState = GreyJetAnimationState.RIGHT_1;
+        greyJetAnimationState = greyJetMovementPattern.movingRight ? GreyJetAnimationState.RIGHT_1
+                : GreyJetAnimationState.LEFT_1;
         explosionState = ExplosionState.EXPLOSION_1;
     }
 
@@ -129,7 +130,7 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
         }
         if (other instanceof JetFighter) {
             gamePlayManager.lifeLost();
-            gamePlayManager.destroyGameObject(this);
+            currentState = State.EXPLODING;
         }
     }
 

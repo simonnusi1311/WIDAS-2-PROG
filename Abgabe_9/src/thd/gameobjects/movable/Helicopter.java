@@ -40,7 +40,8 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
         height = 26;
         hitBoxOffsets(8, 3, -6, 0);
         distanceToBackground = 4;
-        helicopterAnimationState = HelicopterAnimationState.RIGHT;
+        helicopterAnimationState = helicopterMovementPattern.movingRight ? HelicopterAnimationState.RIGHT
+                : HelicopterAnimationState.LEFT;
         currentState = State.FLYING;
         explosionState = ExplosionState.EXPLOSION_1;
     }

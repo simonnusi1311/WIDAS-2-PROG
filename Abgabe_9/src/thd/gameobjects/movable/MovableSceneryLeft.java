@@ -8,6 +8,8 @@ import thd.gameobjects.base.Position;
 import thd.gameobjects.base.ShiftableGameObject;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the left border in the {@link GameView} window.
@@ -33,7 +35,7 @@ public class MovableSceneryLeft extends CollidingGameObject implements Shiftable
         speedInPixel = 1.3;
         size = 0.80;
         rotation = 0;
-        width = 100;
+        width = 800;
         height = 50;
         hitBoxOffsets(0, 0, 0, 0);
         distanceToBackground = 1;
@@ -71,6 +73,19 @@ public class MovableSceneryLeft extends CollidingGameObject implements Shiftable
     @Override
     public void addToCanvas() {
         gameView.addRectangleToCanvas(position.getX(), position.getY(), width, height, 3, true, Color.GREEN.darker());
+        addGrasToRectangle();
+        gameView.addImageToCanvas("grass_edge.png", position.getX() + 787, position.getY() + 5, 1.7, 0);
+    }
+
+    private void addGrasToRectangle() {
+        ArrayList<String> grassImages = new ArrayList<>(List.of("grass_1.png", "grass_2.png", "grass_3.png"));
+        int numberOfGrassImages = 7;
+        double spacing = width / (double) numberOfGrassImages;
+        for (int i = 0; i < numberOfGrassImages; i++) {
+            String image = grassImages.get(i % grassImages.size());
+            double xCoordinate = position.getX() + (i * spacing);
+            gameView.addImageToCanvas(image, xCoordinate, position.getY(), 1.5, 0);
+        }
     }
 
     @Override

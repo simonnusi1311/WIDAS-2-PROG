@@ -40,7 +40,7 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
         distanceToBackground = 2;
         shotIsActive = false;
         stopHorizontalMovement = false;
-        currentState = State.RIGHT;
+        currentState = tankMovementPattern.movingRight ? State.RIGHT : State.LEFT;
     }
 
     private enum State {

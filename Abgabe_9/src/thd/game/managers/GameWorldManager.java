@@ -174,7 +174,7 @@ class GameWorldManager extends GamePlayManager {
                     }
                 } else if (character == 'C') {
                     MovableSceneryLeft movableSceneryLeft = new MovableSceneryLeft(gameView, this);
-                    movableSceneryLeft.getPosition().updateCoordinates(x, y);
+                    movableSceneryLeft.getPosition().updateCoordinates(x - 700, y);
                     jetFighter.addPathDecisionObjects(movableSceneryLeft);
                     if (lineIndex < level.worldOffsetLines) {
                         addActivatableGameObject(movableSceneryLeft);
@@ -241,6 +241,14 @@ class GameWorldManager extends GamePlayManager {
                         addActivatableGameObject(tree);
                     } else {
                         spawnGameObject(tree);
+                    }
+                } else if (character == 'a') {
+                    TestFillClassForBorder testFillClassForBorder = new TestFillClassForBorder(gameView, this);
+                    testFillClassForBorder.getPosition().updateCoordinates(x - 730, y);
+                    if (lineIndex < level.worldOffsetLines) {
+                        addActivatableGameObject(testFillClassForBorder);
+                    } else {
+                        spawnGameObject(testFillClassForBorder);
                     }
                 }
             }
@@ -346,6 +354,11 @@ class GameWorldManager extends GamePlayManager {
             } else if (gameObject instanceof Tree tree) {
                 if (tree.tryToActivate(jetFighter)) {
                     spawnGameObject(tree);
+                    iterator.remove();
+                }
+            } else if (gameObject instanceof TestFillClassForBorder testFillClassForBorder) {
+                if (testFillClassForBorder.tryToActivate(jetFighter)) {
+                    spawnGameObject(testFillClassForBorder);
                     iterator.remove();
                 }
             }

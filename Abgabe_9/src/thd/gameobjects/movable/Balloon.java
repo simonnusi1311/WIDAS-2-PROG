@@ -130,7 +130,7 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
     @Override
     public void addToCanvas() {
         if (currentState == State.EXPLODING) {
-            gameView.addImageToCanvas(explosionState.getImage(), position.getX(), position.getY(), size, 0);
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX()-8, position.getY()-7, size, 0);
         } else {
             gameView.addImageToCanvas(balloonAnimationState.image, position.getX() + 11, position.getY() + 57, 0.18, 0);
             gameView.addImageToCanvas("balloon.png", position.getX(), position.getY(), size, 0);

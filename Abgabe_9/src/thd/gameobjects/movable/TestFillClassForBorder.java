@@ -19,7 +19,7 @@ import java.awt.*;
  * @see Position
  */
 
-public class MovableSceneryFill extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
+public class TestFillClassForBorder extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
 
     /**
      * Creates a new movable fill border Scenery.
@@ -28,13 +28,13 @@ public class MovableSceneryFill extends CollidingGameObject implements Shiftable
      * @param gamePlayManager The main gameplay logic.
      */
 
-    public MovableSceneryFill(GameView gameView, GamePlayManager gamePlayManager) {
+    public TestFillClassForBorder(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
         speedInPixel = 1.3;
         size = 0.80;
         rotation = 0;
-        width = 600;
-        height = 200;
+        width = 800;
+        height = 100;
         hitBoxOffsets(0, 0, 0, 0);
         distanceToBackground = 1;
     }
@@ -70,7 +70,7 @@ public class MovableSceneryFill extends CollidingGameObject implements Shiftable
      */
     @Override
     public void addToCanvas() {
-        gameView.addRectangleToCanvas(position.getX(), position.getY(), width, height, 3, true, Color.GREEN.darker());
+        gameView.addRectangleToCanvas(position.getX(), position.getY(), width, height, 3, true, Color.RED);
     }
 
     @Override

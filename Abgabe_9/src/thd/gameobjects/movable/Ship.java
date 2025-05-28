@@ -131,7 +131,7 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
     @Override
     public void addToCanvas() {
         if (currentState == State.EXPLODING) {
-            gameView.addImageToCanvas(explosionState.getImage(), position.getX(), position.getY(), size, 0);
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX()+15, position.getY()-10, size, 0);
         } else {
             gameView.addImageToCanvas(shipAnimationState.image, position.getX(), position.getY() + 27, 0.15, 0);
             if (shipMovementPattern.movingRight) {
