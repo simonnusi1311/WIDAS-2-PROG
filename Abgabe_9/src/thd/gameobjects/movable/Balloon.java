@@ -2,10 +2,7 @@ package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
-import thd.gameobjects.base.ActivatableGameObject;
-import thd.gameobjects.base.CollidingGameObject;
-import thd.gameobjects.base.Position;
-import thd.gameobjects.base.ShiftableGameObject;
+import thd.gameobjects.base.*;
 import thd.gameobjects.unmovable.SceneryLeft;
 import thd.gameobjects.unmovable.SceneryRight;
 
@@ -22,6 +19,8 @@ import thd.gameobjects.unmovable.SceneryRight;
 public class Balloon extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final BalloonMovementPattern balloonMovementPattern;
     private State currentState;
+    private BalloonAnimationState balloonAnimationState;
+    private ExplosionState explosionState;
 
     /**
      * Creates a new balloon object with random position, speed, size and other properties.
@@ -40,12 +39,30 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
         width = 28;
         height = 55;
         hitBoxOffsets(7, 5, -4, -5);
-        distanceToBackground = 2;
-        currentState = State.STANDARD;
+        distanceToBackground = 4;
+        currentState = State.FLYING;
+        balloonAnimationState = BalloonAnimationState.FLYING_1;
+        explosionState = ExplosionState.EXPLOSION_1;
     }
 
     private enum State {
-        STANDARD, DAMAGED, EXPLODING, LEFT, RIGHT
+        FLYING, DAMAGED, EXPLODING,
+    }
+
+    private enum BalloonAnimationState {
+        FLYING_1("balloon_animation_1.png"),
+        FLYING_2("balloon_animation_2.png"),
+        FLYING_3("balloon_animation_3.png");
+
+        private final String image;
+
+        BalloonAnimationState(String image) {
+            this.image = image;
+        }
+
+        private BalloonAnimationState next() {
+            return values()[(ordinal() + 1) % values().length];
+        }
     }
 
     @Override
@@ -54,15 +71,21 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
             gamePlayManager.destroyGameObject(this);
         }
         switch (currentState) {
-            case STANDARD -> {
+            case FLYING -> {
+                if (gameView.timer(100, 0, this)) {
+                    balloonAnimationState = balloonAnimationState.next();
+                }
             }
             case DAMAGED -> {
             }
-            case LEFT -> {
-            }
-            case RIGHT -> {
-            }
             case EXPLODING -> {
+                if (gameView.timer(100, 0, this)) {
+                    if (explosionState == ExplosionState.EXPLOSION_3) {
+                        gamePlayManager.destroyGameObject(this);
+                    } else {
+                        explosionState = explosionState.next();
+                    }
+                }
             }
         }
     }
@@ -71,11 +94,11 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(60);
-            gamePlayManager.destroyGameObject(this);
+            currentState = State.EXPLODING;
         }
         if (other instanceof JetFighter) {
             gamePlayManager.lifeLost();
-            gamePlayManager.destroyGameObject(this);
+            currentState = State.EXPLODING;
         }
         if (other instanceof SceneryRight || other instanceof SceneryLeft || other instanceof MovableSceneryLeft
                 || other instanceof MovableSceneryRight || other instanceof BigIsland
@@ -91,8 +114,10 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
      */
     @Override
     public void updatePosition() {
+        if (currentState == State.FLYING) {
+            balloonMovementPattern.gamingObjectCanMoveHorizontal(this);
+        }
         position.down(speedInPixel);
-        balloonMovementPattern.gamingObjectCanMoveHorizontal(this);
     }
 
     /**
@@ -104,7 +129,12 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
      */
     @Override
     public void addToCanvas() {
-        gameView.addImageToCanvas("balloon.png", position.getX(), position.getY(), size, 0);
+        if (currentState == State.EXPLODING) {
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX(), position.getY(), size, 0);
+        } else {
+            gameView.addImageToCanvas(balloonAnimationState.image, position.getX() + 11, position.getY() + 57, 0.18, 0);
+            gameView.addImageToCanvas("balloon.png", position.getX(), position.getY(), size, 0);
+        }
     }
 
     @Override

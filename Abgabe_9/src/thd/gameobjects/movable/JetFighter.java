@@ -3,7 +3,6 @@ package thd.gameobjects.movable;
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
 import thd.gameobjects.base.CollidingGameObject;
-import thd.gameobjects.base.ExplosionState;
 import thd.gameobjects.base.MainCharacter;
 import thd.gameobjects.base.Position;
 
@@ -27,10 +26,11 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
     private boolean increaseTheSpeed;
     private final RedFuelBar redFuelBar;
     private FlyingState flyingState;
-    private final JetFighterState jetFighterState;
+    private final State currentState;
     private SpeedingState speedingState;
     private boolean isFlyingRight;
     private boolean isFlyingLeft;
+    private InitializeSpawnPoint initializeSpawnPoint;
 
     /**
      * Creates a new jet fighter object with position, speed, size and other properties.
@@ -54,11 +54,11 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         distanceToBackground = 4;
         this.redFuelBar = redFuelBar;
         flyingState = FlyingState.FLYING_STANDARD;
-        jetFighterState = JetFighterState.FLYING;
+        currentState = State.FLYING;
         speedingState = SpeedingState.FLYING_1;
     }
 
-    private enum JetFighterState {
+    private enum State {
         FLYING, DAMAGED, EXPLODING, SPEEDING
     }
 
@@ -95,7 +95,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         private String getImage() {
             return image;
         }
-        }
+    }
 
     /**
      * The jet moves the left by the given number of pixels.
@@ -191,8 +191,20 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
     public void updatePosition() {
     }
 
+    /**
+     * Sets the spawn point based on the given {@link InitializeSpawnPoint} object.
+     *
+     * @param initializeSpawnPoint the object used to determine the spawn point.
+     */
+    public void setInitializeSpawnPoint(InitializeSpawnPoint initializeSpawnPoint) {
+        this.initializeSpawnPoint = initializeSpawnPoint;
+    }
+
     @Override
     public void updateStatus() {
+        if (position.getY() <= initializeSpawnPoint.getPosition().getY()) {
+            gamePlayManager.finishedLevel();
+        }
         if (!collisionWithFuelItem) {
             gamePlayManager.stopFuelUpTheFuelGage();
         }
@@ -201,7 +213,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
             gamePlayManager.moveWorldDown(1.3);
             redFuelBar.getPosition().left(0.10);
         }
-        switch (jetFighterState) {
+        switch (currentState) {
             case FLYING -> {
                 if (increaseTheSpeed && gameView.timer(100, 0, this)) {
                     speedingState = speedingState.next();

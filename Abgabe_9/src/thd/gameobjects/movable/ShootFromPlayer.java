@@ -9,7 +9,7 @@ import thd.gameobjects.base.Position;
 class ShootFromPlayer extends CollidingGameObject {
 
     private ShootAnimationState shootAnimationState;
-    private boolean triggerAnimation;
+    private State currentState;
 
     ShootFromPlayer(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
@@ -19,9 +19,14 @@ class ShootFromPlayer extends CollidingGameObject {
         rotation = 0;
         width = 1;
         height = 5;
+        distanceToBackground = 3;
         hitBoxOffsets(0, 0, 0, 8);
+        currentState = State.FLYING;
         shootAnimationState = ShootAnimationState.SHOOT_ANIMATION_1;
-        triggerAnimation = false;
+    }
+
+    private enum State {
+        FLYING, EXPLODING
     }
 
     private enum ShootAnimationState {
@@ -39,7 +44,7 @@ class ShootFromPlayer extends CollidingGameObject {
             return values()[(ordinal() + 1) % values().length];
         }
 
-        public String getImage() {
+        private String getImage() {
             return image;
         }
     }
@@ -50,13 +55,32 @@ class ShootFromPlayer extends CollidingGameObject {
             gamePlayManager.destroyGameObject(this);
         }
 
+
+        switch (currentState) {
+            case FLYING -> {
+                if (shootHitsUpperBoundary()) {
+                    gamePlayManager.destroyGameObject(this);
+                }
+            }
+            case EXPLODING -> {
+                if (gameView.timer(100, 0, this)) {
+                    shootAnimationState = shootAnimationState.next();
+                }
+                if (shootAnimationState == ShootAnimationState.SHOOT_ANIMATION_3) {
+                    gamePlayManager.destroyGameObject(this);
+                }
+            }
+        }
+
+
     }
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
 
-        if (other instanceof MovableSceneryLeft || other instanceof MovableSceneryRight || other instanceof BigIsland) {
-            triggerAnimation = true;
+        if (other instanceof MovableSceneryLeft || other instanceof MovableSceneryRight || other instanceof BigIsland
+                || other instanceof MovableSceneryFill) {
+            currentState = State.EXPLODING;
             speedInPixel = 0;
         } else {
             gamePlayManager.destroyGameObject(this);
@@ -81,6 +105,11 @@ class ShootFromPlayer extends CollidingGameObject {
      */
     @Override
     public void addToCanvas() {
-        gameView.addBlockImageToCanvas(ShootFromPlayerBlockImages.SHOOT_FROM_PLAYER_BLOCK_IMAGES, position.getX(), position.getY(), 3, 0);
+        if (currentState == State.EXPLODING) {
+            gameView.addImageToCanvas(shootAnimationState.getImage(), position.getX() - 25, position.getY() - 10, size, 0);
+        } else {
+            gameView.addBlockImageToCanvas(ShootFromPlayerBlockImages.SHOOT_FROM_PLAYER_BLOCK_IMAGES, position.getX(), position.getY(), 3, 0);
+        }
+
     }
 }

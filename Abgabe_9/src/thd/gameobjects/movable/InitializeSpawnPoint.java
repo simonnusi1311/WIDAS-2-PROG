@@ -48,9 +48,6 @@ public class InitializeSpawnPoint extends GameObject implements ShiftableGameObj
     @Override
     public void updatePosition() {
         position.down(speedInPixel);
-        if (position.getY() >= 600) {
-            gamePlayManager.finishedLevel();
-        }
     }
 
 

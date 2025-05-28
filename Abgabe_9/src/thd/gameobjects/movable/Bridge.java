@@ -40,7 +40,6 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
         rotation = 0;
         width = 135;
         height = 75;
-        counterForLevel = 1;
         hitBoxOffsets(4, 10, 0, -5);
         distanceToBackground = 3;
         currentState = State.STANDARD;
@@ -71,12 +70,12 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(100);
-            gamePlayManager.bridgeDestroyed(this);
+            gamePlayManager.bridgeDestroyed();
             gamePlayManager.destroyGameObject(this);
         }
         if (other instanceof JetFighter) {
             gamePlayManager.lifeLost();
-            gamePlayManager.bridgeDestroyed(this);
+            gamePlayManager.bridgeDestroyed();
             gamePlayManager.destroyGameObject(this);
         }
     }
@@ -84,7 +83,7 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
     /**
      * Change the Level Section if bridge gets destroyed.
      *
-     * @param counterForLevel the new level number.
+     * @param counterForLevel the next level to set.
      */
     public void setCounterForLevel(int counterForLevel) {
         this.counterForLevel = counterForLevel;

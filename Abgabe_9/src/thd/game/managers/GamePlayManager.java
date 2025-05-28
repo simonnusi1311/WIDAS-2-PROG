@@ -20,7 +20,7 @@ public class GamePlayManager extends WorldShiftManager {
     protected int points;
     protected int lives;
     private Tank activeTank;
-    private int counterForBridges;
+    protected int counterForBridges;
     private boolean levelReady;
 
     protected GamePlayManager(GameView gameView) {
@@ -83,12 +83,8 @@ public class GamePlayManager extends WorldShiftManager {
 
     /**
      * Counter for the new level section if bridge gets destroyed.
-     *
-     * @param bridge the bridge for the level counter.
      */
-    public void bridgeDestroyed(Bridge bridge) {
-        counterForBridges++;
-        bridge.setCounterForLevel(counterForBridges);
+    public void bridgeDestroyed() {
         levelCounter();
     }
 

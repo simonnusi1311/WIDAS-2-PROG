@@ -2,10 +2,7 @@ package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
-import thd.gameobjects.base.ActivatableGameObject;
-import thd.gameobjects.base.CollidingGameObject;
-import thd.gameobjects.base.Position;
-import thd.gameobjects.base.ShiftableGameObject;
+import thd.gameobjects.base.*;
 
 /**
  * Represents an enemy jet in grey in the {@link GameView} window.
@@ -20,7 +17,8 @@ import thd.gameobjects.base.ShiftableGameObject;
 public class GreyJet extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final GreyJetMovementPattern greyJetMovementPattern;
     private State currentState;
-
+    private GreyJetAnimationState greyJetAnimationState;
+    private ExplosionState explosionState;
 
     /**
      * Creates a new grey jet object with position, speed and size.
@@ -40,12 +38,50 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
         width = 35;
         height = 25;
         hitBoxOffsets(5, 3, -5, -8);
-        distanceToBackground = 3;
-        currentState = State.STANDARD;
+        distanceToBackground = 4;
+        currentState = State.FLYING;
+        greyJetAnimationState = GreyJetAnimationState.RIGHT_1;
+        explosionState = ExplosionState.EXPLOSION_1;
     }
 
     private enum State {
-        STANDARD, DAMAGED, EXPLODING, LEFT, RIGHT
+        FLYING, DAMAGED, EXPLODING
+    }
+
+    private enum GreyJetAnimationState {
+        RIGHT_1("grey_jet_animation_right_one.png"),
+        RIGHT_2("grey_jet_animation_right_two.png"),
+        RIGHT_3("grey_jet_animation_right_three.png"),
+
+        LEFT_1("grey_jet_animation_left_one.png"),
+        LEFT_2("grey_jet_animation_left_two.png"),
+        LEFT_3("grey_jet_animation_left_three.png");
+
+        private final String image;
+
+        GreyJetAnimationState(String image) {
+            this.image = image;
+        }
+
+        private GreyJetAnimationState nextRight() {
+            return switch (this) {
+                case RIGHT_1 -> RIGHT_2;
+                case RIGHT_2 -> RIGHT_3;
+                case RIGHT_3, LEFT_3, LEFT_2, LEFT_1 -> RIGHT_1;
+            };
+        }
+
+        private GreyJetAnimationState nextLeft() {
+            return switch (this) {
+                case LEFT_1 -> LEFT_2;
+                case LEFT_2 -> LEFT_3;
+                case LEFT_3, RIGHT_1, RIGHT_2, RIGHT_3 -> LEFT_1;
+            };
+        }
+
+        private String getImage() {
+            return image;
+        }
     }
 
     @Override
@@ -64,15 +100,23 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
             gamePlayManager.destroyGameObject(this);
         }
         switch (currentState) {
-            case STANDARD -> {
-            }
-            case DAMAGED -> {
-            }
-            case LEFT -> {
-            }
-            case RIGHT -> {
+            case FLYING -> {
+                if (gameView.timer(80, 0, this)) {
+                    if (greyJetMovementPattern.movingRight) {
+                        greyJetAnimationState = greyJetAnimationState.nextRight();
+                    } else {
+                        greyJetAnimationState = greyJetAnimationState.nextLeft();
+                    }
+                }
             }
             case EXPLODING -> {
+                if (gameView.timer(100, 0, this)) {
+                    if (explosionState == ExplosionState.EXPLOSION_3) {
+                        gamePlayManager.destroyGameObject(this);
+                    } else {
+                        explosionState = explosionState.next();
+                    }
+                }
             }
         }
     }
@@ -81,7 +125,7 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(100);
-            gamePlayManager.destroyGameObject(this);
+            currentState = State.EXPLODING;
         }
         if (other instanceof JetFighter) {
             gamePlayManager.lifeLost();
@@ -96,9 +140,11 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
      */
     @Override
     public void updatePosition() {
+        if (currentState == State.FLYING) {
+            greyJetMovementPattern.gamingObjectCanMoveHorizontal(this);
+            teleportToOppositeSide();
+        }
         position.down(1.3);
-        greyJetMovementPattern.gamingObjectCanMoveHorizontal(this);
-        teleportToOppositeSide();
     }
 
     private void teleportToOppositeSide() {
@@ -128,10 +174,18 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
      */
     @Override
     public void addToCanvas() {
-        if (greyJetMovementPattern.movingRight) {
-            gameView.addImageToCanvas("grey_jet.png", position.getX(), position.getY(), size, 0);
+        if (currentState == State.EXPLODING) {
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX(), position.getY(), size, 0);
         } else {
-            gameView.addImageToCanvas("grey_jet_left.png", position.getX(), position.getY(), size, 0);
+
+            if (greyJetMovementPattern.movingRight) {
+                gameView.addImageToCanvas("grey_jet.png", position.getX(), position.getY(), size, 0);
+                gameView.addImageToCanvas(greyJetAnimationState.getImage(), position.getX() - 25, position.getY(), 0.07, 0);
+            }
+            if (!greyJetMovementPattern.movingRight) {
+                gameView.addImageToCanvas("grey_jet_left.png", position.getX(), position.getY(), size, 0);
+                gameView.addImageToCanvas(greyJetAnimationState.getImage(), position.getX() + 35, position.getY(), 0.07, 0);
+            }
         }
     }
 

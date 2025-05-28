@@ -67,7 +67,7 @@ public class RedFuelBar extends GameObject {
         stopMovingIfHitsLeftBoundary();
         stopMovingIfHitsRightBoundary();
         if (jetHitsFuelItem) {
-            position.right(speedInPixel + 0.30);
+            position.right(speedInPixel + 0.50);
         } else {
             position.left(speedInPixel);
         }

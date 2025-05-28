@@ -122,6 +122,7 @@ class GameWorldManager extends GamePlayManager {
                 } else if (character == 'X') {
                     Bridge bridge = new Bridge(gameView, this);
                     bridge.getPosition().updateCoordinates(x + 4, y - 12);
+                    bridge.setCounterForLevel(level.number + 1);
                     if (lineIndex < level.worldOffsetLines) {
                         addActivatableGameObject(bridge);
                     } else {
@@ -227,10 +228,19 @@ class GameWorldManager extends GamePlayManager {
                 } else if (character == 'D') {
                     InitializeSpawnPoint initializeSpawnPoint = new InitializeSpawnPoint(gameView, this);
                     initializeSpawnPoint.getPosition().updateCoordinates(x, y);
+                    jetFighter.setInitializeSpawnPoint(initializeSpawnPoint);
                     if (lineIndex < level.worldOffsetLines) {
                         addActivatableGameObject(initializeSpawnPoint);
                     } else {
                         spawnGameObject(initializeSpawnPoint);
+                    }
+                } else if (character == 't') {
+                    Tree tree = new Tree(gameView, this);
+                    tree.getPosition().updateCoordinates(x, y);
+                    if (lineIndex < level.worldOffsetLines) {
+                        addActivatableGameObject(tree);
+                    } else {
+                        spawnGameObject(tree);
                     }
                 }
             }
@@ -274,6 +284,7 @@ class GameWorldManager extends GamePlayManager {
                 }
             } else if (gameObject instanceof Bridge bridge) {
                 if (bridge.tryToActivate(jetFighter)) {
+                    bridge.setCounterForLevel(level.number + 1);
                     spawnGameObject(bridge);
                     iterator.remove();
                 }
@@ -330,6 +341,11 @@ class GameWorldManager extends GamePlayManager {
             } else if (gameObject instanceof InitializeSpawnPoint initializeSpawnPoint) {
                 if (initializeSpawnPoint.tryToActivate(jetFighter)) {
                     spawnGameObject(initializeSpawnPoint);
+                    iterator.remove();
+                }
+            } else if (gameObject instanceof Tree tree) {
+                if (tree.tryToActivate(jetFighter)) {
+                    spawnGameObject(tree);
                     iterator.remove();
                 }
             }

@@ -15,6 +15,8 @@ import thd.gameobjects.base.*;
  */
 public class FuelItem extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final FuelItemMovementPattern fuelItemMovementPattern;
+    private State currentState;
+    private ExplosionState explosionState;
 
     /**
      * Creates a new fuel-item object with a random x Coordinate in the top-mid position.
@@ -34,6 +36,16 @@ public class FuelItem extends CollidingGameObject implements ShiftableGameObject
         height = 90;
         hitBoxOffsets(5, 4, -6, 0);
         distanceToBackground = 3;
+        currentState = State.MOVING;
+        explosionState = ExplosionState.EXPLOSION_1;
+    }
+
+    private enum State {
+        MOVING, EXPLODING
+    }
+
+    private enum FuelItemAnimation {
+
     }
 
 
@@ -42,13 +54,28 @@ public class FuelItem extends CollidingGameObject implements ShiftableGameObject
         if (gameObjectHitsLowerBoundary()) {
             gamePlayManager.destroyGameObject(this);
         }
+
+        switch (currentState) {
+            case MOVING -> {
+
+            }
+            case EXPLODING -> {
+                if (gameView.timer(100, 0, this)) {
+                    if (explosionState == ExplosionState.EXPLOSION_3) {
+                        gamePlayManager.destroyGameObject(this);
+                    } else {
+                        explosionState = explosionState.next();
+                    }
+                }
+            }
+        }
     }
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(80);
-            gamePlayManager.destroyGameObject(this);
+            currentState = State.EXPLODING;
         }
     }
 
@@ -71,8 +98,11 @@ public class FuelItem extends CollidingGameObject implements ShiftableGameObject
      */
     @Override
     public void addToCanvas() {
-        gameView.addImageToCanvas("fuel.png", position.getX(), position.getY(), size, 0);
-
+        if (currentState == State.EXPLODING) {
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX()-12, position.getY()+15, size, 0);
+        } else {
+            gameView.addImageToCanvas("fuel.png", position.getX(), position.getY(), size, 0);
+        }
     }
 
     @Override

@@ -19,7 +19,7 @@ import thd.gameobjects.unmovable.SceneryRight;
 public class Helicopter extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final HelicopterMovementPattern helicopterMovementPattern;
     private HelicopterAnimationState helicopterAnimationState;
-    private HelicopterState helicopterState;
+    private State currentState;
     private ExplosionState explosionState;
 
     /**
@@ -39,13 +39,13 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
         width = 41;
         height = 26;
         hitBoxOffsets(8, 3, -6, 0);
-        distanceToBackground = 2;
+        distanceToBackground = 4;
         helicopterAnimationState = HelicopterAnimationState.RIGHT;
-        helicopterState = HelicopterState.FLYING;
+        currentState = State.FLYING;
         explosionState = ExplosionState.EXPLOSION_1;
     }
 
-    private enum HelicopterState {
+    private enum State {
         FLYING, DAMAGED, EXPLODING
     }
 
@@ -73,7 +73,7 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
         if (gameObjectHitsLowerBoundary()) {
             gamePlayManager.destroyGameObject(this);
         }
-        switch (helicopterState) {
+        switch (currentState) {
             case FLYING -> {
                 if (gameView.timer(10, 0, this)) {
                     if (helicopterMovementPattern.movingRight) {
@@ -83,10 +83,7 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
                     }
                 }
             }
-
-
             case EXPLODING -> {
-                stopMovingHorizontallyIfExploded();
                 if (gameView.timer(100, 0, this)) {
                     if (explosionState == ExplosionState.EXPLOSION_3) {
                         gamePlayManager.destroyGameObject(this);
@@ -98,24 +95,15 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
         }
     }
 
-    private void stopMovingHorizontallyIfExploded() {
-        if (helicopterMovementPattern.movingRight) {
-            position.left(speedInPixel);
-        }
-        if (!helicopterMovementPattern.movingRight) {
-            position.right(speedInPixel);
-        }
-    }
-
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(60);
-            helicopterState = HelicopterState.EXPLODING;
+            currentState = State.EXPLODING;
         }
-        if (other instanceof JetFighter) {
+        if (other instanceof JetFighter && currentState == State.FLYING) {
+            currentState = State.EXPLODING;
             gamePlayManager.lifeLost();
-            gamePlayManager.destroyGameObject(this);
         }
         if (other instanceof SceneryLeft || other instanceof SceneryRight || other instanceof MovableSceneryRight
                 || other instanceof MovableSceneryLeft || other instanceof BigIsland
@@ -131,8 +119,10 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
      */
     @Override
     public void updatePosition() {
+        if (currentState == State.FLYING) {
+            helicopterMovementPattern.gamingObjectCanMoveHorizontal(this);
+        }
         position.down(speedInPixel);
-        helicopterMovementPattern.gamingObjectCanMoveHorizontal(this);
     }
 
     /**
@@ -144,7 +134,7 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
      */
     @Override
     public void addToCanvas() {
-        if (helicopterState == HelicopterState.EXPLODING) {
+        if (currentState == State.EXPLODING) {
             gameView.addImageToCanvas(explosionState.getImage(), position.getX() - 12, position.getY() - 12, size, 0);
         } else {
             gameView.addImageToCanvas(helicopterAnimationState.image, position.getX(), position.getY(), size, 0);

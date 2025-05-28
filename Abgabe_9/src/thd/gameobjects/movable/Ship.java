@@ -2,10 +2,7 @@ package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
-import thd.gameobjects.base.ActivatableGameObject;
-import thd.gameobjects.base.CollidingGameObject;
-import thd.gameobjects.base.Position;
-import thd.gameobjects.base.ShiftableGameObject;
+import thd.gameobjects.base.*;
 import thd.gameobjects.unmovable.SceneryLeft;
 import thd.gameobjects.unmovable.SceneryRight;
 
@@ -22,6 +19,8 @@ import thd.gameobjects.unmovable.SceneryRight;
 public class Ship extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
     private final ShipMovementPattern shipMovementPattern;
     private State currentState;
+    private ShipAnimationState shipAnimationState;
+    private ExplosionState explosionState;
 
     /**
      * Creates a new ship object with default position, speed, size and other properties.
@@ -40,11 +39,30 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
         height = 30;
         hitBoxOffsets(7, 4, -2, -5);
         distanceToBackground = 2;
-        currentState = State.STANDARD;
+        currentState = State.DRIVING;
+        shipAnimationState = ShipAnimationState.WAVE_1;
+        explosionState = ExplosionState.EXPLOSION_1;
     }
 
     private enum State {
-        STANDARD, DAMAGED, EXPLODING, LEFT, RIGHT
+        DRIVING, DAMAGED, EXPLODING
+    }
+
+    private enum ShipAnimationState {
+        WAVE_1("ship_wave_one.png"),
+        WAVE_2("ship_wave_three.png"),
+        WAVE_3("ship_wave_two.png");
+
+        private final String image;
+
+        ShipAnimationState(String image) {
+            this.image = image;
+        }
+
+        private ShipAnimationState next() {
+            return values()[(ordinal() + 1) % values().length];
+        }
+
     }
 
 
@@ -54,15 +72,21 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
             gamePlayManager.destroyGameObject(this);
         }
         switch (currentState) {
-            case STANDARD -> {
+            case DRIVING -> {
+                if (gameView.timer(65, 0, this)) {
+                    shipAnimationState = shipAnimationState.next();
+                }
             }
             case DAMAGED -> {
             }
-            case LEFT -> {
-            }
-            case RIGHT -> {
-            }
             case EXPLODING -> {
+                if (gameView.timer(100, 0, this)) {
+                    if (explosionState == ExplosionState.EXPLOSION_3) {
+                        gamePlayManager.destroyGameObject(this);
+                    } else {
+                        explosionState = explosionState.next();
+                    }
+                }
             }
         }
     }
@@ -71,11 +95,11 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(30);
-            gamePlayManager.destroyGameObject(this);
+            currentState = State.EXPLODING;
         }
-        if (other instanceof JetFighter) {
+        if (other instanceof JetFighter && currentState == State.DRIVING) {
+            currentState = State.EXPLODING;
             gamePlayManager.lifeLost();
-            gamePlayManager.destroyGameObject(this);
         }
         if (other instanceof SceneryLeft || other instanceof SceneryRight || other instanceof MovableSceneryLeft
                 || other instanceof MovableSceneryRight || other instanceof BigIsland
@@ -91,8 +115,10 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
      */
     @Override
     public void updatePosition() {
+        if (currentState == State.DRIVING) {
+            shipMovementPattern.gamingObjectCanMoveHorizontal(this);
+        }
         position.down(speedInPixel);
-        shipMovementPattern.gamingObjectCanMoveHorizontal(this);
     }
 
     /**
@@ -104,10 +130,15 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
      */
     @Override
     public void addToCanvas() {
-        if (shipMovementPattern.movingRight) {
-            gameView.addImageToCanvas("ship.png", position.getX(), position.getY(), size, 0);
+        if (currentState == State.EXPLODING) {
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX(), position.getY(), size, 0);
         } else {
-            gameView.addImageToCanvas("ship_left.png", position.getX(), position.getY(), size, 0);
+            gameView.addImageToCanvas(shipAnimationState.image, position.getX(), position.getY() + 27, 0.15, 0);
+            if (shipMovementPattern.movingRight) {
+                gameView.addImageToCanvas("ship.png", position.getX(), position.getY(), size, 0);
+            } else {
+                gameView.addImageToCanvas("ship_left.png", position.getX(), position.getY(), size, 0);
+            }
         }
     }
 

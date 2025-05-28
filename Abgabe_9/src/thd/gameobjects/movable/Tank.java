@@ -19,7 +19,7 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
     private ShootFromTank shootFromTank;
     private boolean shotIsActive;
     private boolean stopHorizontalMovement;
-    private TankAnimationState tankAnimationState;
+    private State currentState;
 
 
     /**
@@ -40,24 +40,24 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
         distanceToBackground = 2;
         shotIsActive = false;
         stopHorizontalMovement = false;
-        tankAnimationState = TankAnimationState.RIGHT;
+        currentState = State.RIGHT;
     }
 
-    private enum TankAnimationState {
+    private enum State {
         RIGHT("tank.png"), RIGHT_CHANGE("tank_change_right.png"),
         LEFT("tank_left.png"), LEFT_CHANGE("tank_change_left.png");
 
         private final String image;
 
-        TankAnimationState(String image) {
+        State(String image) {
             this.image = image;
         }
 
-        private TankAnimationState nextRight() {
+        private State nextRight() {
             return this == RIGHT ? RIGHT_CHANGE : RIGHT;
         }
 
-        private TankAnimationState nextLeft() {
+        private State nextLeft() {
             return this == LEFT ? LEFT_CHANGE : LEFT;
         }
 
@@ -82,9 +82,9 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
         shootOnPlayer();
         if (!stopHorizontalMovement && gameView.timer(80, 0, this)) {
             if (tankMovementPattern.movingRight) {
-                tankAnimationState = tankAnimationState.nextRight();
+                currentState = currentState.nextRight();
             } else {
-                tankAnimationState = tankAnimationState.nextLeft();
+                currentState = currentState.nextLeft();
             }
         }
     }
@@ -152,7 +152,7 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
      */
     @Override
     public void addToCanvas() {
-        gameView.addImageToCanvas(tankAnimationState.getImage(), position.getX(), position.getY(), size, 0);
+        gameView.addImageToCanvas(currentState.getImage(), position.getX(), position.getY(), size, 0);
     }
 
     @Override
