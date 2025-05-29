@@ -102,7 +102,7 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
         }
         if (other instanceof SceneryRight || other instanceof SceneryLeft || other instanceof MovableSceneryLeft
                 || other instanceof MovableSceneryRight || other instanceof BigIsland
-                || other instanceof SmallIsland || other instanceof MovableSceneryFill) {
+                || other instanceof SmallIsland) {
             balloonMovementPattern.changeDirectionIfObjectHitsBoundary();
         }
     }

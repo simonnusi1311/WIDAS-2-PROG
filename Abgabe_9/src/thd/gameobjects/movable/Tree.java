@@ -69,6 +69,9 @@ public class Tree extends GameObject implements ShiftableGameObject, Activatable
     @Override
     public void addToCanvas() {
         spawnARandomTree();
+        gameView.addImageToCanvas("grass_1.png", position.getX() + 110, position.getY() + 100, 1, 0);
+        gameView.addImageToCanvas("grass_2.png", position.getX() + 40, position.getY() + 70, 1, 0);
+        gameView.addImageToCanvas("grass_3.png", position.getX() + 30, position.getY() + 90, 1, 0);
     }
 
     private void spawnARandomTree() {

@@ -190,15 +190,6 @@ class GameWorldManager extends GamePlayManager {
                     } else {
                         spawnGameObject(movableSceneryRight);
                     }
-                } else if (character == 'I') {
-                    MovableSceneryFill movableSceneryFill = new MovableSceneryFill(gameView, this);
-                    movableSceneryFill.getPosition().updateCoordinates(x - 400, y);
-                    jetFighter.addPathDecisionObjects(movableSceneryFill);
-                    if (lineIndex < level.worldOffsetLines) {
-                        addActivatableGameObject(movableSceneryFill);
-                    } else {
-                        spawnGameObject(movableSceneryFill);
-                    }
                 } else if (character == 'W') {
                     SpecialBorderForTank specialBorderForTank = new SpecialBorderForTank(gameView, this);
                     specialBorderForTank.getPosition().updateCoordinates(x, y);
@@ -241,14 +232,6 @@ class GameWorldManager extends GamePlayManager {
                         addActivatableGameObject(tree);
                     } else {
                         spawnGameObject(tree);
-                    }
-                } else if (character == 'a') {
-                    TestFillClassForBorder testFillClassForBorder = new TestFillClassForBorder(gameView, this);
-                    testFillClassForBorder.getPosition().updateCoordinates(x - 730, y);
-                    if (lineIndex < level.worldOffsetLines) {
-                        addActivatableGameObject(testFillClassForBorder);
-                    } else {
-                        spawnGameObject(testFillClassForBorder);
                     }
                 }
             }
@@ -331,11 +314,6 @@ class GameWorldManager extends GamePlayManager {
                     spawnGameObject(movableSceneryRight);
                     iterator.remove();
                 }
-            } else if (gameObject instanceof MovableSceneryFill movableSceneryFill) {
-                if (movableSceneryFill.tryToActivate(jetFighter)) {
-                    spawnGameObject(movableSceneryFill);
-                    iterator.remove();
-                }
             } else if (gameObject instanceof SpecialBorderForTank specialBorderForTank) {
                 if (specialBorderForTank.tryToActivate(jetFighter)) {
                     spawnGameObject(specialBorderForTank);
@@ -354,11 +332,6 @@ class GameWorldManager extends GamePlayManager {
             } else if (gameObject instanceof Tree tree) {
                 if (tree.tryToActivate(jetFighter)) {
                     spawnGameObject(tree);
-                    iterator.remove();
-                }
-            } else if (gameObject instanceof TestFillClassForBorder testFillClassForBorder) {
-                if (testFillClassForBorder.tryToActivate(jetFighter)) {
-                    spawnGameObject(testFillClassForBorder);
                     iterator.remove();
                 }
             }

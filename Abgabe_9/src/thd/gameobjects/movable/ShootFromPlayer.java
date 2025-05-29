@@ -78,8 +78,7 @@ class ShootFromPlayer extends CollidingGameObject {
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
 
-        if (other instanceof MovableSceneryLeft || other instanceof MovableSceneryRight || other instanceof BigIsland
-                || other instanceof MovableSceneryFill) {
+        if (other instanceof MovableSceneryLeft || other instanceof MovableSceneryRight || other instanceof BigIsland) {
             currentState = State.EXPLODING;
             speedInPixel = 0;
         } else {

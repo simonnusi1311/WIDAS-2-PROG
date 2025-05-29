@@ -8,8 +8,6 @@ import thd.gameobjects.base.Position;
 import thd.gameobjects.base.ShiftableGameObject;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents the right border in the {@link GameView} window.
@@ -73,18 +71,7 @@ public class MovableSceneryRight extends CollidingGameObject implements Shiftabl
     @Override
     public void addToCanvas() {
         gameView.addRectangleToCanvas(position.getX(), position.getY(), width, height, 3, true, Color.GREEN.darker());
-        addGrasToRectangle();
-    }
-
-    private void addGrasToRectangle() {
-        ArrayList<String> grassImages = new ArrayList<>(List.of("grass_1.png", "grass_2.png", "grass_3.png"));
-        int numberOfGrassImages = 7;
-        double spacing = width / (double) numberOfGrassImages;
-        for (int i = 0; i < numberOfGrassImages; i++) {
-            String image = grassImages.get(i % grassImages.size());
-            double xCoordinate = position.getX() + (i * spacing);
-            gameView.addImageToCanvas(image, xCoordinate, position.getY(), 1.5, 0);
-        }
+        gameView.addImageToCanvas("grass_edge_left.png", position.getX(), position.getY(), 1.42, 0);
     }
 
     @Override

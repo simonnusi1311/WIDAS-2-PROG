@@ -103,7 +103,7 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
         }
         if (other instanceof SceneryLeft || other instanceof SceneryRight || other instanceof MovableSceneryLeft
                 || other instanceof MovableSceneryRight || other instanceof BigIsland
-                || other instanceof SmallIsland || other instanceof MovableSceneryFill) {
+                || other instanceof SmallIsland) {
             shipMovementPattern.changeDirectionIfObjectHitsBoundary();
         }
     }

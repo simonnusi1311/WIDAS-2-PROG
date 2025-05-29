@@ -128,7 +128,7 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
             gamePlayManager.addPoints(100);
             currentState = State.EXPLODING;
         }
-        if (other instanceof JetFighter) {
+        if (other instanceof JetFighter && currentState == State.FLYING) {
             gamePlayManager.lifeLost();
             currentState = State.EXPLODING;
         }
