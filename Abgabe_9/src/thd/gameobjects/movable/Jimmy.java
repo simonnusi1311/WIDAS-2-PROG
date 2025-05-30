@@ -39,7 +39,7 @@ public class Jimmy extends GameObject {
         }
 
         private RunningState switchToNextRunningState() {
-            int nextState = (ordinal() + 1) % State.values().length;
+            int nextState = (ordinal() + 1) % RunningState.values().length;
             return RunningState.values()[nextState];
         }
     }

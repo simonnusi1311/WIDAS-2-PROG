@@ -80,6 +80,8 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
             case DAMAGED -> {
             }
             case EXPLODING -> {
+                height = 0;
+                width = 0;
                 if (gameView.timer(100, 0, this)) {
                     if (explosionState == ExplosionState.EXPLOSION_3) {
                         gamePlayManager.destroyGameObject(this);
@@ -101,9 +103,10 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
             currentState = State.EXPLODING;
             gamePlayManager.lifeLost();
         }
-        if (other instanceof SceneryLeft || other instanceof SceneryRight || other instanceof MovableSceneryLeft
+        if (other instanceof SceneryRight || other instanceof SceneryLeft || other instanceof MovableSceneryLeft
                 || other instanceof MovableSceneryRight || other instanceof BigIsland
-                || other instanceof SmallIsland) {
+                || other instanceof SmallIsland || other instanceof IslandTopHitBox || other instanceof IslandTopHitBoxTwo
+                || other instanceof IslandBottomHitBox || other instanceof IslandBottomHitBoxTwo) {
             shipMovementPattern.changeDirectionIfObjectHitsBoundary();
         }
     }
@@ -118,7 +121,7 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
         if (currentState == State.DRIVING) {
             shipMovementPattern.gamingObjectCanMoveHorizontal(this);
         }
-        position.down(speedInPixel);
+        shipMovementPattern.gameObjectMovesVertical(this);
     }
 
     /**
@@ -131,7 +134,7 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
     @Override
     public void addToCanvas() {
         if (currentState == State.EXPLODING) {
-            gameView.addImageToCanvas(explosionState.getImage(), position.getX()+15, position.getY()-10, size, 0);
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX() + 15, position.getY() - 10, size, 0);
         } else {
             gameView.addImageToCanvas(shipAnimationState.image, position.getX(), position.getY() + 27, 0.15, 0);
             if (shipMovementPattern.movingRight) {

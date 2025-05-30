@@ -85,6 +85,8 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
                 }
             }
             case EXPLODING -> {
+                height = 0;
+                width = 0;
                 if (gameView.timer(100, 0, this)) {
                     if (explosionState == ExplosionState.EXPLOSION_3) {
                         gamePlayManager.destroyGameObject(this);
@@ -106,9 +108,10 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
             currentState = State.EXPLODING;
             gamePlayManager.lifeLost();
         }
-        if (other instanceof SceneryLeft || other instanceof SceneryRight || other instanceof MovableSceneryRight
-                || other instanceof MovableSceneryLeft || other instanceof BigIsland
-                || other instanceof SmallIsland) {
+        if (other instanceof SceneryRight || other instanceof SceneryLeft || other instanceof MovableSceneryLeft
+                || other instanceof MovableSceneryRight || other instanceof BigIsland
+                || other instanceof SmallIsland || other instanceof IslandTopHitBox || other instanceof IslandTopHitBoxTwo
+                || other instanceof IslandBottomHitBox || other instanceof IslandBottomHitBoxTwo) {
             helicopterMovementPattern.changeDirectionIfObjectHitsBoundary();
         }
     }
@@ -123,7 +126,7 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
         if (currentState == State.FLYING) {
             helicopterMovementPattern.gamingObjectCanMoveHorizontal(this);
         }
-        position.down(speedInPixel);
+        helicopterMovementPattern.gameObjectMovesVertical(this);
     }
 
     /**

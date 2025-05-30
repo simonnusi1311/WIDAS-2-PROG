@@ -41,7 +41,7 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
         width = 135;
         height = 75;
         hitBoxOffsets(4, 10, 0, -5);
-        distanceToBackground = 3;
+        distanceToBackground = 2;
         currentState = State.STANDARD;
         explosionState = ExplosionState.EXPLOSION_1;
         bridgeDamaged = BridgeDamaged.BRIDGE_DAMAGED_1;
@@ -66,10 +66,6 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
             this.image = image;
         }
 
-        private BridgeDamaged next() {
-            return values()[(ordinal() + 1) % values().length];
-        }
-
         private BridgeDamaged firstHit() {
             return switch (this) {
                 case BRIDGE_DAMAGED_6 -> BRIDGE_DAMAGED_1;
@@ -84,7 +80,7 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
                 case BRIDGE_DAMAGED_5 -> BRIDGE_DAMAGED_2;
                 case BRIDGE_DAMAGED_2 -> BRIDGE_DAMAGED_3;
                 case BRIDGE_DAMAGED_3 -> BRIDGE_DAMAGED_4;
-                case BRIDGE_DAMAGED_4, BRIDGE_DAMAGED_6 -> BRIDGE_DAMAGED_1;
+                case BRIDGE_DAMAGED_4, BRIDGE_DAMAGED_6 -> BRIDGE_DAMAGED_2;
             };
         }
 
@@ -110,6 +106,8 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
                 }
             }
             case EXPLODED -> {
+                height = 0;
+                width = 0;
                 if (gameView.timer(100, 0, this)) {
                     if (explosionState == ExplosionState.EXPLOSION_3) {
                         gamePlayManager.addPoints(100);
@@ -178,7 +176,7 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
     public void addToCanvas() {
         if (currentState == State.EXPLODED) {
             gameView.addImageToCanvas(explosionState.getImage(), position.getX() + 10, position.getY() - 5, 0.8, 0);
-            gameView.addImageToCanvas(explosionState.getImage(), position.getX() + 65, position.getY() - 5, 0.8, 0);
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX() + 70, position.getY() - 5, 0.8, 0);
         } else {
             if ((currentState == State.DAMAGED)) {
                 gameView.addImageToCanvas(bridgeDamaged.getImage(), position.getX() + 20, position.getY() - 85, size, 0);

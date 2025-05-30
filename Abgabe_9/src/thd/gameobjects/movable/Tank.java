@@ -37,6 +37,7 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
         rotation = 0;
         width = 150;
         height = 33;
+        hitBoxOffsets(8, 3, -100, 0);
         distanceToBackground = 2;
         shotIsActive = false;
         stopHorizontalMovement = false;

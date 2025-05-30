@@ -63,11 +63,14 @@ class ShootFromPlayer extends CollidingGameObject {
                 }
             }
             case EXPLODING -> {
+                width = 0;
+                height = 0;
                 if (gameView.timer(100, 0, this)) {
-                    shootAnimationState = shootAnimationState.next();
-                }
-                if (shootAnimationState == ShootAnimationState.SHOOT_ANIMATION_3) {
-                    gamePlayManager.destroyGameObject(this);
+                    if (shootAnimationState == ShootAnimationState.SHOOT_ANIMATION_3) {
+                        gamePlayManager.destroyGameObject(this);
+                    } else {
+                        shootAnimationState = shootAnimationState.next();
+                    }
                 }
             }
         }
@@ -77,10 +80,10 @@ class ShootFromPlayer extends CollidingGameObject {
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
-
-        if (other instanceof MovableSceneryLeft || other instanceof MovableSceneryRight || other instanceof BigIsland) {
-            currentState = State.EXPLODING;
+        if (other instanceof MovableSceneryLeft || other instanceof MovableSceneryRight || other instanceof BigIsland
+                || other instanceof IslandBottomHitBox || other instanceof IslandBottomHitBoxTwo) {
             speedInPixel = 0;
+            currentState = State.EXPLODING;
         } else {
             gamePlayManager.destroyGameObject(this);
         }
@@ -92,7 +95,11 @@ class ShootFromPlayer extends CollidingGameObject {
 
     @Override
     public void updatePosition() {
-        position.up(speedInPixel);
+        if (currentState == State.EXPLODING) {
+            position.down(1.3);
+        } else {
+            position.up(speedInPixel);
+        }
     }
 
     /**
@@ -105,7 +112,7 @@ class ShootFromPlayer extends CollidingGameObject {
     @Override
     public void addToCanvas() {
         if (currentState == State.EXPLODING) {
-            gameView.addImageToCanvas(shootAnimationState.getImage(), position.getX() - 25, position.getY() - 10, size, 0);
+            gameView.addImageToCanvas(shootAnimationState.getImage(), position.getX() - 30, position.getY() - 30, size, 0);
         } else {
             gameView.addBlockImageToCanvas(ShootFromPlayerBlockImages.SHOOT_FROM_PLAYER_BLOCK_IMAGES, position.getX(), position.getY(), 3, 0);
         }

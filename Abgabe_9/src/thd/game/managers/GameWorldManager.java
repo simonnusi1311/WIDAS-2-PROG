@@ -202,6 +202,9 @@ class GameWorldManager extends GamePlayManager {
                     BigIsland bigIsland = new BigIsland(gameView, this);
                     bigIsland.getPosition().updateCoordinates(x, y);
                     jetFighter.addPathDecisionObjects(bigIsland);
+                    for (CollidingGameObject hitbox : bigIsland.collectAllHitBoxes()) {
+                        jetFighter.addPathDecisionObjects(hitbox);
+                    }
                     if (lineIndex < level.worldOffsetLines) {
                         addActivatableGameObject(bigIsland);
                     } else {

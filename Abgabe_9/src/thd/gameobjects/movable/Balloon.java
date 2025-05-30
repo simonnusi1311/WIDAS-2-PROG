@@ -79,6 +79,8 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
             case DAMAGED -> {
             }
             case EXPLODING -> {
+                width = 0;
+                height = 0;
                 if (gameView.timer(100, 0, this)) {
                     if (explosionState == ExplosionState.EXPLOSION_3) {
                         gamePlayManager.destroyGameObject(this);
@@ -102,7 +104,8 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
         }
         if (other instanceof SceneryRight || other instanceof SceneryLeft || other instanceof MovableSceneryLeft
                 || other instanceof MovableSceneryRight || other instanceof BigIsland
-                || other instanceof SmallIsland) {
+                || other instanceof SmallIsland || other instanceof IslandTopHitBox || other instanceof IslandTopHitBoxTwo
+                || other instanceof IslandBottomHitBox || other instanceof IslandBottomHitBoxTwo) {
             balloonMovementPattern.changeDirectionIfObjectHitsBoundary();
         }
     }
@@ -117,7 +120,7 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
         if (currentState == State.FLYING) {
             balloonMovementPattern.gamingObjectCanMoveHorizontal(this);
         }
-        position.down(speedInPixel);
+        balloonMovementPattern.gameObjectMovesVertical(this);
     }
 
     /**
@@ -130,7 +133,7 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
     @Override
     public void addToCanvas() {
         if (currentState == State.EXPLODING) {
-            gameView.addImageToCanvas(explosionState.getImage(), position.getX()-8, position.getY()-7, size, 0);
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX() - 8, position.getY() - 7, size, 0);
         } else {
             gameView.addImageToCanvas(balloonAnimationState.image, position.getX() + 11, position.getY() + 57, 0.18, 0);
             gameView.addImageToCanvas("balloon.png", position.getX(), position.getY(), size, 0);

@@ -35,7 +35,7 @@ public class MovableSceneryLeft extends CollidingGameObject implements Shiftable
         rotation = 0;
         width = 800;
         height = 50;
-        hitBoxOffsets(0, 0, 0, 0);
+        hitBoxOffsets(0, 0, -10, 0);
         distanceToBackground = 1;
     }
 

@@ -3,6 +3,7 @@ package thd.gameobjects.movable;
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
 import thd.gameobjects.base.CollidingGameObject;
+import thd.gameobjects.base.ExplosionState;
 import thd.gameobjects.base.MainCharacter;
 import thd.gameobjects.base.Position;
 
@@ -26,11 +27,13 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
     private boolean increaseTheSpeed;
     private final RedFuelBar redFuelBar;
     private FlyingState flyingState;
-    private final State currentState;
+    private State currentState;
     private SpeedingState speedingState;
     private boolean isFlyingRight;
     private boolean isFlyingLeft;
     private InitializeSpawnPoint initializeSpawnPoint;
+    private ExplosionState explosionState;
+    private boolean blinkVisible;
 
     /**
      * Creates a new jet fighter object with position, speed, size and other properties.
@@ -56,10 +59,11 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         flyingState = FlyingState.FLYING_STANDARD;
         currentState = State.FLYING;
         speedingState = SpeedingState.FLYING_1;
+        explosionState = ExplosionState.EXPLOSION_1;
     }
 
     private enum State {
-        FLYING, DAMAGED, EXPLODING, SPEEDING
+        FLYING, EXPLODING, RESPAWNING
     }
 
     private enum FlyingState {
@@ -163,7 +167,14 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         if (other instanceof FuelItem) {
             collisionWithFuelItem = true;
             gamePlayManager.fillUpTheFuelGage();
+        } else if (currentState == State.FLYING) {
+            triggerExplosion();
         }
+    }
+
+    private void triggerExplosion() {
+        currentState = State.EXPLODING;
+        explosionState = ExplosionState.EXPLOSION_1;
     }
 
     /**
@@ -202,17 +213,10 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
 
     @Override
     public void updateStatus() {
-        if (position.getY() <= initializeSpawnPoint.getPosition().getY()) {
-            gamePlayManager.finishedLevel();
-        }
-        if (!collisionWithFuelItem) {
-            gamePlayManager.stopFuelUpTheFuelGage();
-        }
-        collisionWithFuelItem = false;
-        if (increaseTheSpeed) {
-            gamePlayManager.moveWorldDown(1.3);
-            redFuelBar.getPosition().left(0.10);
-        }
+        initializeSpawnPointForPlayer();
+        handleFuelLogic();
+        handleSpeedLogicOrFreeze();
+
         switch (currentState) {
             case FLYING -> {
                 if (increaseTheSpeed && gameView.timer(100, 0, this)) {
@@ -226,15 +230,63 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
                     flyingState = FlyingState.FLYING_STANDARD;
                 }
             }
-            case DAMAGED -> {
-
-            }
             case EXPLODING -> {
+                if (gameView.timer(100, 0, 0)) {
+                    explosionState = explosionState.next();
+                }
 
+                if (explosionState == ExplosionState.EXPLOSION_3) {
+                    position.updateCoordinates(GameView.WIDTH / 2.0, 600);
+                    blinkVisible = true;
+                    explosionState = ExplosionState.EXPLOSION_1;
+                    currentState = State.RESPAWNING;
+                }
+            }
+            case RESPAWNING -> {
+                if (gameView.timer(200, 2, this)) {
+                    blinkVisible = !blinkVisible;
+                }
+
+                if (gameView.timer(2000, 3, this)) {
+                    currentState = State.FLYING;
+                }
             }
         }
         isFlyingLeft = false;
         isFlyingRight = false;
+    }
+
+    private void initializeSpawnPointForPlayer() {
+        if (position.getY() <= initializeSpawnPoint.getPosition().getY()) {
+            gamePlayManager.finishedLevel();
+        }
+    }
+
+    private void handleFuelLogic() {
+        if (!collisionWithFuelItem) {
+            gamePlayManager.stopFuelUpTheFuelGage();
+        }
+        collisionWithFuelItem = false;
+    }
+
+    private void handleSpeedLogic() {
+        if (increaseTheSpeed) {
+            gamePlayManager.moveWorldDown(1.3);
+            redFuelBar.getPosition().left(0.10);
+        }
+    }
+
+    private void handleSpeedLogicOrFreeze() {
+        if (currentState == State.FLYING) {
+            if (increaseTheSpeed) {
+                gamePlayManager.moveWorldDown(1.3);
+                redFuelBar.getPosition().left(0.10);
+            } else {
+                gamePlayManager.moveWorldUp(0);
+            }
+        } else if (currentState == State.EXPLODING || currentState == State.RESPAWNING) {
+            gamePlayManager.moveWorldUp(1.3);
+        }
     }
 
     /**
@@ -246,6 +298,10 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      */
     @Override
     public void addToCanvas() {
+        if (currentState == State.RESPAWNING && !blinkVisible) {
+            return;
+        }
+
         if (increaseTheSpeed) {
             gameView.addImageToCanvas(speedingState.getImage(), position.getX() - 82.5, position.getY() - 9, 0.2, 0);
         }

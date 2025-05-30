@@ -12,6 +12,7 @@ import thd.gameobjects.unmovable.SceneryLeft;
 public class MovementPattern {
     private final Position position;
     protected final Random random;
+    private final VerticalMovementPattern verticalMovementPattern;
 
     /**
      * Movement direction (true=right, false=left).
@@ -21,6 +22,7 @@ public class MovementPattern {
     protected MovementPattern() {
         position = new Position(0, 0);
         random = new Random();
+        verticalMovementPattern = new VerticalMovementPattern();
     }
 
     protected Position nextPosition() {
@@ -43,6 +45,17 @@ public class MovementPattern {
         }
         if (!movingRight && yCoordinate >= -100 && yCoordinate <= GameView.HEIGHT + 100) {
             gameObject.getPosition().left(gameObject.speedInPixel);
+        }
+    }
+
+    /**
+     * Moves the given game object vertically based on a predefined movement pattern.
+     *
+     * @param gameObject the game object to be moved vertically
+     */
+    public void gameObjectMovesVertical(GameObject gameObject) {
+        for (Position moves : verticalMovementPattern.loadPattern("down")) {
+            gameObject.getPosition().down(moves.getY() * gameObject.speedInPixel);
         }
     }
 

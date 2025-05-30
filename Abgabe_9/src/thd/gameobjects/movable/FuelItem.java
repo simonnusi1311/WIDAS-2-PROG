@@ -60,6 +60,8 @@ public class FuelItem extends CollidingGameObject implements ShiftableGameObject
 
             }
             case EXPLODING -> {
+                height = 0;
+                width = 0;
                 if (gameView.timer(100, 0, this)) {
                     if (explosionState == ExplosionState.EXPLOSION_3) {
                         gamePlayManager.destroyGameObject(this);

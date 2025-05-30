@@ -7,6 +7,8 @@ import thd.gameobjects.base.CollidingGameObject;
 import thd.gameobjects.base.Position;
 import thd.gameobjects.base.ShiftableGameObject;
 
+import java.util.List;
+
 import java.awt.*;
 
 /**
@@ -18,6 +20,11 @@ import java.awt.*;
  */
 
 public class BigIsland extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
+
+    private final IslandBottomHitBox islandBottomHitBox;
+    private final IslandBottomHitBoxTwo islandBottomHitBoxTwo;
+    private final IslandTopHitBox islandTopHitBox;
+    private final IslandTopHitBoxTwo islandTopHitBoxTwo;
 
     /**
      * Creates a new big island in game view.
@@ -33,8 +40,16 @@ public class BigIsland extends CollidingGameObject implements ShiftableGameObjec
         rotation = 0;
         width = 180;
         height = 1500;
-        hitBoxOffsets(-72, -750, -30, 0);
+        hitBoxOffsets(-72, -550, -30, -400);
         distanceToBackground = 1;
+        islandBottomHitBox = new IslandBottomHitBox(gameView, gamePlayManager);
+        islandBottomHitBoxTwo = new IslandBottomHitBoxTwo(gameView, gamePlayManager);
+        islandTopHitBox = new IslandTopHitBox(gameView, gamePlayManager);
+        islandTopHitBoxTwo = new IslandTopHitBoxTwo(gameView, gamePlayManager);
+        gamePlayManager.spawnGameObject(islandBottomHitBox);
+        gamePlayManager.spawnGameObject(islandBottomHitBoxTwo);
+        gamePlayManager.spawnGameObject(islandTopHitBox);
+        gamePlayManager.spawnGameObject(islandTopHitBoxTwo);
     }
 
     @Override
@@ -46,6 +61,16 @@ public class BigIsland extends CollidingGameObject implements ShiftableGameObjec
     }
 
     /**
+     * Returns all special hitboxes of the island.
+     * These hitboxes are used for collision and path decision handling.
+     *
+     * @return A list of {@link CollidingGameObject} representing all hitbox objects.
+     */
+    public List<CollidingGameObject> collectAllHitBoxes() {
+        return List.of(islandBottomHitBox, islandBottomHitBoxTwo, islandTopHitBox);
+    }
+
+    /**
      * Updates the position of the gaming object.
      *
      * @see Position
@@ -53,6 +78,10 @@ public class BigIsland extends CollidingGameObject implements ShiftableGameObjec
     @Override
     public void updatePosition() {
         position.down(speedInPixel);
+        islandBottomHitBox.getPosition().updateCoordinates(position.getX() + 6, position.getY() + 700);
+        islandBottomHitBoxTwo.getPosition().updateCoordinates(position.getX() + 6, position.getY() + 700);
+        islandTopHitBox.getPosition().updateCoordinates(position.getX() + 6, position.getY() - 500);
+        islandTopHitBoxTwo.getPosition().updateCoordinates(position.getX() + 6, position.getY() - 680);
     }
 
 

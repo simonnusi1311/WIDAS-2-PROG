@@ -10,45 +10,39 @@ import thd.gameobjects.base.ShiftableGameObject;
 import java.awt.*;
 
 /**
- * Represents the right border in the {@link GameView} window.
- * The border is a movable object that has different properties,
- * such as speed and size. The position is defined by the
- * x and y coordinates from {@link Position}.
+ * Represents a BigIsland in the {@link GameView} window.
+ * this island is a bigger obstacle in the center of the Game.
  *
  * @see GameView
  * @see Position
  */
 
-public class MovableSceneryRight extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
+class IslandTopHitBox extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
 
     /**
-     * Creates a new right border Scenery.
+     * Creates a new big island in game view.
      *
-     * @param gameView        The gaming window where the helicopter will be displayed.
+     * @param gameView        The gaming window where the Bridge will be displayed.
      * @param gamePlayManager The main gameplay logic.
      */
 
-    public MovableSceneryRight(GameView gameView, GamePlayManager gamePlayManager) {
+    IslandTopHitBox(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
         speedInPixel = 1.3;
-        size = 0.80;
+        size = 0.50;
         rotation = 0;
-        width = 1000;
-        height = 50;
-        hitBoxOffsets(10, 0, 0, 0);
+        width = 180;
+        height = 1500;
+        hitBoxOffsets(-55, -150, -80, -1380);
         distanceToBackground = 1;
     }
 
     @Override
     public void updateStatus() {
-        if (gameObjectHitsLowerBoundary()) {
-            gamePlayManager.destroyGameObject(this);
-        }
     }
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
-
     }
 
     /**
@@ -58,8 +52,9 @@ public class MovableSceneryRight extends CollidingGameObject implements Shiftabl
      */
     @Override
     public void updatePosition() {
-        position.down(speedInPixel);
+
     }
+
 
     /**
      * Adds the gaming object to the game canvas in {@link GameView}
@@ -70,13 +65,12 @@ public class MovableSceneryRight extends CollidingGameObject implements Shiftabl
      */
     @Override
     public void addToCanvas() {
-        gameView.addRectangleToCanvas(position.getX(), position.getY(), width, height, 3, true, Color.GREEN.darker());
-        gameView.addImageToCanvas("grass_edge_left.png", position.getX(), position.getY(), 1.42, 0);
+        gameView.addOvalToCanvas(position.getX(), position.getY(), 50, 50, 4, true, Color.GREEN.darker());
     }
+
 
     @Override
     public boolean tryToActivate(JetFighter info) {
         return getPosition().getY() < info.getPosition().getY() + ACTIVATION_DISTANCE;
     }
 }
-
