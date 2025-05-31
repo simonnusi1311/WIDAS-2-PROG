@@ -9,7 +9,7 @@ import java.util.List;
 
 class LevelManager extends GameWorldManager {
     private List<Level> levels;
-    private static final int LIVES = 3;
+    private static final int LIVES = 5;
 
     protected LevelManager(GameView gameView) {
         super(gameView);

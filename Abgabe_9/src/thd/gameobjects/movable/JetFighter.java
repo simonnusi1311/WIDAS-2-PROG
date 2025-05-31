@@ -7,6 +7,9 @@ import thd.gameobjects.base.ExplosionState;
 import thd.gameobjects.base.MainCharacter;
 import thd.gameobjects.base.Position;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,6 +37,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
     private InitializeSpawnPoint initializeSpawnPoint;
     private ExplosionState explosionState;
     private boolean blinkVisible;
+    private boolean isInRespawnPhase;
 
     /**
      * Creates a new jet fighter object with position, speed, size and other properties.
@@ -60,6 +64,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         currentState = State.FLYING;
         speedingState = SpeedingState.FLYING_1;
         explosionState = ExplosionState.EXPLOSION_1;
+        isInRespawnPhase = false;
     }
 
     private enum State {
@@ -164,12 +169,36 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
+        if (currentState != State.FLYING) {
+            return;
+        }
         if (other instanceof FuelItem) {
             collisionWithFuelItem = true;
             gamePlayManager.fillUpTheFuelGage();
-        } else if (currentState == State.FLYING) {
-            triggerExplosion();
+            return;
         }
+        if (isEnemyCollidingWithJet(other) && !isInvincible()) {
+            gamePlayManager.lifeLost();
+            triggerExplosion();
+            return;
+        }
+    }
+
+    private boolean isEnemyCollidingWithJet(CollidingGameObject other) {
+        return other instanceof Balloon
+                || other instanceof Ship
+                || other instanceof Helicopter
+                || other instanceof GreyJet
+                || other instanceof ShootFromTank;
+    }
+
+    /**
+     * Checks whether the JetFighter is currently invincible during the respawn phase.
+     *
+     * @return true if the JetFighter is in the respawn phase and cannot be damaged.
+     */
+    public boolean isInvincible() {
+        return isInRespawnPhase;
     }
 
     private void triggerExplosion() {
@@ -236,19 +265,22 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
                 }
 
                 if (explosionState == ExplosionState.EXPLOSION_3) {
-                    position.updateCoordinates(GameView.WIDTH / 2.0, 600);
+                    position.updateCoordinates(findSafeRespawnPosition());
                     blinkVisible = true;
                     explosionState = ExplosionState.EXPLOSION_1;
                     currentState = State.RESPAWNING;
+                    isInRespawnPhase = true;
                 }
             }
             case RESPAWNING -> {
+                flyingState = FlyingState.FLYING_STANDARD;
                 if (gameView.timer(200, 2, this)) {
                     blinkVisible = !blinkVisible;
                 }
 
                 if (gameView.timer(2000, 3, this)) {
                     currentState = State.FLYING;
+                    isInRespawnPhase = false;
                 }
             }
         }
@@ -269,13 +301,6 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         collisionWithFuelItem = false;
     }
 
-    private void handleSpeedLogic() {
-        if (increaseTheSpeed) {
-            gamePlayManager.moveWorldDown(1.3);
-            redFuelBar.getPosition().left(0.10);
-        }
-    }
-
     private void handleSpeedLogicOrFreeze() {
         if (currentState == State.FLYING) {
             if (increaseTheSpeed) {
@@ -289,6 +314,30 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         }
     }
 
+    private Position findSafeRespawnPosition() {
+        ArrayList<Double> possibleXCoordinatesToSpawn = new ArrayList<>(List.of(GameView.WIDTH / 2.0, GameView.WIDTH - 100.0,
+                (GameView.WIDTH / 2.0) - 200.0, (GameView.WIDTH + 100.0) + 100, (GameView.WIDTH / 2.0) + 200));
+        double currentXCoordinate = position.getX();
+
+        possibleXCoordinatesToSpawn.sort(Comparator.comparingDouble(spawnX -> Math.abs(spawnX - currentXCoordinate)));
+
+        for (double xCoordinate : possibleXCoordinatesToSpawn) {
+            position.updateCoordinates(xCoordinate, 600);
+            boolean collides = false;
+
+            for (CollidingGameObject object : collidingGameObjectsForPathDecision) {
+                if (collidesWith(object)) {
+                    collides = true;
+                    break;
+                }
+            }
+            if (!collides) {
+                return new Position(xCoordinate, 600);
+            }
+        }
+        return new Position(GameView.WIDTH / 2.0, 600);
+    }
+
     /**
      * Adds the gaming object to the game canvas in {@link GameView}
      * by placing an image or shape (oval, rectangle, etc.) at the respective position.
@@ -298,6 +347,9 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      */
     @Override
     public void addToCanvas() {
+        if (currentState == State.RESPAWNING) {
+            showOvalIfJetIsInRespawnPhase();
+        }
         if (currentState == State.RESPAWNING && !blinkVisible) {
             return;
         }
@@ -307,4 +359,9 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         }
         gameView.addImageToCanvas(flyingState.getImage(), position.getX(), position.getY(), size, 0);
     }
+
+    private void showOvalIfJetIsInRespawnPhase() {
+        gameView.addOvalToCanvas(position.getX() + 20, position.getY() + 23, 60, 55, 2, false, Color.WHITE);
+    }
 }
+

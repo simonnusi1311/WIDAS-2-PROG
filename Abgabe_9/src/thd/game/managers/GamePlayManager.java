@@ -20,7 +20,6 @@ public class GamePlayManager extends WorldShiftManager {
     protected int points;
     protected int lives;
     private Tank activeTank;
-    protected int counterForBridges;
     private boolean levelReady;
 
     protected GamePlayManager(GameView gameView) {
@@ -120,6 +119,10 @@ public class GamePlayManager extends WorldShiftManager {
     public void spawnGameObject(GameObject gameObject) {
         super.spawnGameObject(gameObject);
         gameObjectManager.add(gameObject);
+    }
+
+    public boolean isJetInRespawn() {
+        return jetFighter.isInvincible();
     }
 
     /**

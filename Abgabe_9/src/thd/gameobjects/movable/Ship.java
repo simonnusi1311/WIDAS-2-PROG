@@ -45,7 +45,7 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
     }
 
     private enum State {
-        DRIVING, DAMAGED, EXPLODING
+        DRIVING, EXPLODING
     }
 
     private enum ShipAnimationState {
@@ -77,8 +77,6 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
                     shipAnimationState = shipAnimationState.next();
                 }
             }
-            case DAMAGED -> {
-            }
             case EXPLODING -> {
                 height = 0;
                 width = 0;
@@ -95,13 +93,17 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
+        if (other instanceof JetFighter jetFighter) {
+            if (jetFighter.isInvincible()) {
+                return;
+            }
+            if (currentState == Ship.State.DRIVING) {
+                currentState = Ship.State.EXPLODING;
+            }
+        }
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(30);
             currentState = State.EXPLODING;
-        }
-        if (other instanceof JetFighter && currentState == State.DRIVING) {
-            currentState = State.EXPLODING;
-            gamePlayManager.lifeLost();
         }
         if (other instanceof SceneryRight || other instanceof SceneryLeft || other instanceof MovableSceneryLeft
                 || other instanceof MovableSceneryRight || other instanceof BigIsland

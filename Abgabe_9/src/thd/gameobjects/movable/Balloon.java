@@ -46,7 +46,7 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
     }
 
     private enum State {
-        FLYING, DAMAGED, EXPLODING,
+        FLYING, EXPLODING,
     }
 
     private enum BalloonAnimationState {
@@ -76,8 +76,6 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
                     balloonAnimationState = balloonAnimationState.next();
                 }
             }
-            case DAMAGED -> {
-            }
             case EXPLODING -> {
                 width = 0;
                 height = 0;
@@ -94,12 +92,17 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
+        if (other instanceof JetFighter jetFighter) {
+            if (jetFighter.isInvincible()) {
+                return;
+            }
+            if (currentState == Balloon.State.FLYING) {
+                currentState = Balloon.State.EXPLODING;
+            }
+        }
+
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(60);
-            currentState = State.EXPLODING;
-        }
-        if (other instanceof JetFighter) {
-            gamePlayManager.lifeLost();
             currentState = State.EXPLODING;
         }
         if (other instanceof SceneryRight || other instanceof SceneryLeft || other instanceof MovableSceneryLeft

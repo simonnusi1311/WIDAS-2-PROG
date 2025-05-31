@@ -40,7 +40,6 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof JetFighter) {
             gamePlayManager.destroyGameObject(this);
-            gamePlayManager.lifeLost();
         }
     }
 
@@ -49,8 +48,7 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
         position.down(0.5);
         if (tank.getTankMovementPattern().movingRight) {
             position.right(speedInPixel);
-        }
-        if (!tank.getTankMovementPattern().movingRight) {
+        } else {
             position.left(speedInPixel);
         }
     }

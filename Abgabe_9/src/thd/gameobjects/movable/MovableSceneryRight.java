@@ -10,10 +10,8 @@ import thd.gameobjects.base.ShiftableGameObject;
 import java.awt.*;
 
 /**
- * Represents the right border in the {@link GameView} window.
- * The border is a movable object that has different properties,
- * such as speed and size. The position is defined by the
- * x and y coordinates from {@link Position}.
+ * Represents the right-side moving scenery border in the {@link GameView}.
+ * This object simulates a scrolling ground element on the left edge of the screen.
  *
  * @see GameView
  * @see Position
@@ -22,7 +20,7 @@ import java.awt.*;
 public class MovableSceneryRight extends CollidingGameObject implements ShiftableGameObject, ActivatableGameObject<JetFighter> {
 
     /**
-     * Creates a new right border Scenery.
+     * Creates a new instance of the right-side movable scenery object.
      *
      * @param gameView        The gaming window where the helicopter will be displayed.
      * @param gamePlayManager The main gameplay logic.

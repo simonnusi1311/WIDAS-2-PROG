@@ -34,7 +34,7 @@ public class LifeCounter extends GameObject {
         rotation = 0;
         width = 70;
         height = 670;
-        lifeCounter = 3;
+        lifeCounter = 5;
         distanceToBackground = 5;
     }
 

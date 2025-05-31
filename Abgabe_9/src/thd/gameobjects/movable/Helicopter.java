@@ -47,7 +47,7 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
     }
 
     private enum State {
-        FLYING, DAMAGED, EXPLODING
+        FLYING, EXPLODING
     }
 
     private enum HelicopterAnimationState {
@@ -100,13 +100,18 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
+        if (other instanceof JetFighter jetFighter) {
+            if(jetFighter.isInvincible()){
+                return;
+            }
+            if(currentState == State.FLYING){
+                currentState = State.EXPLODING;
+            }
+        }
+
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(60);
             currentState = State.EXPLODING;
-        }
-        if (other instanceof JetFighter && currentState == State.FLYING) {
-            currentState = State.EXPLODING;
-            gamePlayManager.lifeLost();
         }
         if (other instanceof SceneryRight || other instanceof SceneryLeft || other instanceof MovableSceneryLeft
                 || other instanceof MovableSceneryRight || other instanceof BigIsland

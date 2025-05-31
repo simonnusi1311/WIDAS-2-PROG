@@ -46,7 +46,7 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
     }
 
     private enum State {
-        FLYING, DAMAGED, EXPLODING
+        FLYING, EXPLODING
     }
 
     private enum GreyJetAnimationState {
@@ -126,12 +126,16 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
 
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
+        if (other instanceof JetFighter jetFighter) {
+            if (jetFighter.isInvincible()) {
+                return;
+            }
+            if (currentState == GreyJet.State.FLYING) {
+                currentState = GreyJet.State.EXPLODING;
+            }
+        }
         if (other instanceof ShootFromPlayer) {
             gamePlayManager.addPoints(100);
-            currentState = State.EXPLODING;
-        }
-        if (other instanceof JetFighter && currentState == State.FLYING) {
-            gamePlayManager.lifeLost();
             currentState = State.EXPLODING;
         }
     }
