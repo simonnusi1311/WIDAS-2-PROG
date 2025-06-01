@@ -121,6 +121,11 @@ public class GamePlayManager extends WorldShiftManager {
         gameObjectManager.add(gameObject);
     }
 
+    /**
+     * Checks whether the jet fighter is currently in the respawn phase.
+     *
+     * @return true if the jet fighter is in an invincible state. 
+     */
     public boolean isJetInRespawn() {
         return jetFighter.isInvincible();
     }

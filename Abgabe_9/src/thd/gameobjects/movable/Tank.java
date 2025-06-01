@@ -100,7 +100,7 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
     }
 
     private void changeShootToActive(ShootFromTank shootFromTank) {
-        if (position.getY() >= 550) {
+        if (position.getY() >= 585) {
             gamePlayManager.spawnGameObject(shootFromTank);
             shotIsActive = true;
         }

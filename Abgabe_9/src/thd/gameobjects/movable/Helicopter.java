@@ -101,10 +101,10 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
     @Override
     public void reactToCollisionWith(CollidingGameObject other) {
         if (other instanceof JetFighter jetFighter) {
-            if(jetFighter.isInvincible()){
+            if (jetFighter.isInvincible()) {
                 return;
             }
-            if(currentState == State.FLYING){
+            if (currentState == State.FLYING) {
                 currentState = State.EXPLODING;
             }
         }

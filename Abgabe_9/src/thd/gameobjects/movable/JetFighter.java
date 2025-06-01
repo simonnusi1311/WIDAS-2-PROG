@@ -145,10 +145,12 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      */
     @Override
     public void shoot() {
-        ShootFromPlayer shootFromPlayer = new ShootFromPlayer(gameView, gamePlayManager);
-        shootFromPlayer.getPosition().updateCoordinates(position.getX() + 20, position.getY() - 11);
-        if (gameView.timer(shotDurationInMilliseconds, 0, this)) {
-            gamePlayManager.spawnGameObject(shootFromPlayer);
+        if (currentState != State.RESPAWNING) {
+            ShootFromPlayer shootFromPlayer = new ShootFromPlayer(gameView, gamePlayManager);
+            shootFromPlayer.getPosition().updateCoordinates(position.getX() + 20, position.getY() - 11);
+            if (gameView.timer(shotDurationInMilliseconds, 0, this)) {
+                gamePlayManager.spawnGameObject(shootFromPlayer);
+            }
         }
     }
 
