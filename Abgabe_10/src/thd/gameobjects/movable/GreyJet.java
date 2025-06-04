@@ -182,7 +182,7 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
     @Override
     public void addToCanvas() {
         if (currentState == State.EXPLODING) {
-            gameView.addImageToCanvas(explosionState.getImage(), position.getX(), position.getY(), size, 0);
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX(), position.getY()-15, size, 0);
         } else {
 
             if (greyJetMovementPattern.movingRight) {

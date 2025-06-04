@@ -115,7 +115,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         position.left(speedInPixel);
         isFlyingLeft = true;
         for (CollidingGameObject collidingGameObject : collidingGameObjectsForPathDecision) {
-            if (collidesWith(collidingGameObject)) {
+            if (collidesWith(collidingGameObject) && isBlockingObject(collidingGameObject)) {
                 position.right(speedInPixel);
                 break;
             }
@@ -131,11 +131,15 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         position.right(speedInPixel);
         isFlyingRight = true;
         for (CollidingGameObject collidingGameObject : collidingGameObjectsForPathDecision) {
-            if (collidesWith(collidingGameObject)) {
+            if (collidesWith(collidingGameObject) && isBlockingObject(collidingGameObject)) {
                 position.left(speedInPixel);
                 break;
             }
         }
+    }
+
+    private boolean isBlockingObject(CollidingGameObject collidingGameObject) {
+        return collidingGameObject instanceof BridgeLeft || collidingGameObject instanceof BridgeRight;
     }
 
     /**
@@ -179,10 +183,9 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
             gamePlayManager.fillUpTheFuelGage();
             return;
         }
-        if (isEnemyCollidingWithJet(other) && !isInvincible()) {
+        if (!isInvincible() && (isEnemyCollidingWithJet(other) || isSceneryCollidingWithJet(other))) {
             gamePlayManager.lifeLost();
             triggerExplosion();
-            return;
         }
     }
 
@@ -192,6 +195,17 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
                 || other instanceof Helicopter
                 || other instanceof GreyJet
                 || other instanceof ShootFromTank;
+    }
+
+    private boolean isSceneryCollidingWithJet(CollidingGameObject other) {
+        return other instanceof BigIsland
+                || other instanceof SmallIsland
+                || other instanceof IslandBottomHitBox
+                || other instanceof IslandBottomHitBoxTwo
+                || other instanceof IslandTopHitBox
+                || other instanceof IslandTopHitBoxTwo
+                || other instanceof MovableSceneryRight
+                || other instanceof MovableSceneryLeft;
     }
 
     /**
@@ -262,27 +276,27 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
                 }
             }
             case EXPLODING -> {
-                if (gameView.timer(100, 0, 0)) {
+                if (gameView.timer(100, 0, this)) {
                     explosionState = explosionState.next();
                 }
-
                 if (explosionState == ExplosionState.EXPLOSION_3) {
                     position.updateCoordinates(findSafeRespawnPosition());
-                    blinkVisible = true;
-                    explosionState = ExplosionState.EXPLOSION_1;
                     currentState = State.RESPAWNING;
                     isInRespawnPhase = true;
+                    blinkVisible = true;
                 }
             }
             case RESPAWNING -> {
                 flyingState = FlyingState.FLYING_STANDARD;
-                if (gameView.timer(200, 2, this)) {
+
+                if (gameView.timer(150, 0, this)) {
                     blinkVisible = !blinkVisible;
                 }
 
-                if (gameView.timer(2000, 3, this)) {
+                if (gameView.timer(1000, 0, this)) {
                     currentState = State.FLYING;
                     isInRespawnPhase = false;
+                    blinkVisible = true;
                 }
             }
         }
@@ -307,7 +321,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         if (currentState == State.FLYING) {
             if (increaseTheSpeed) {
                 gamePlayManager.moveWorldDown(1.3);
-                redFuelBar.getPosition().left(0.15);
+                redFuelBar.getPosition().right(0.15);
             } else {
                 gamePlayManager.moveWorldUp(0);
             }
@@ -317,10 +331,12 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
     }
 
     private Position findSafeRespawnPosition() {
-        ArrayList<Double> possibleXCoordinatesToSpawn = new ArrayList<>(List.of(GameView.WIDTH / 2.0, GameView.WIDTH - 100.0,
-                (GameView.WIDTH / 2.0) - 200.0, (GameView.WIDTH + 100.0) + 100, (GameView.WIDTH / 2.0) + 200));
-        double currentXCoordinate = position.getX();
+        ArrayList<Double> possibleXCoordinatesToSpawn = new ArrayList<>();
 
+        for (double xCoordinate = 0; xCoordinate <= GameView.WIDTH - 40.0; xCoordinate += 80.0) {
+            possibleXCoordinatesToSpawn.add(xCoordinate);
+        }
+        double currentXCoordinate = position.getX();
         possibleXCoordinatesToSpawn.sort(Comparator.comparingDouble(spawnX -> Math.abs(spawnX - currentXCoordinate)));
 
         for (double xCoordinate : possibleXCoordinatesToSpawn) {
@@ -349,6 +365,11 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      */
     @Override
     public void addToCanvas() {
+        if (currentState == State.EXPLODING) {
+            gameView.addImageToCanvas(explosionState.getImage(), position.getX(), position.getY(), size, 0);
+            return;
+        }
+
         if (currentState == State.RESPAWNING) {
             showOvalIfJetIsInRespawnPhase();
         }

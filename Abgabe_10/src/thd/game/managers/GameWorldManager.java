@@ -328,6 +328,11 @@ class GameWorldManager extends GamePlayManager {
                     spawnGameObject(bigIsland);
                     iterator.remove();
                 }
+            } else if (gameObject instanceof SmallIsland smallIsland) {
+                if (smallIsland.tryToActivate(jetFighter)) {
+                    spawnGameObject(smallIsland);
+                    iterator.remove();
+                }
             } else if (gameObject instanceof InitializeSpawnPoint initializeSpawnPoint) {
                 if (initializeSpawnPoint.tryToActivate(jetFighter)) {
                     spawnGameObject(initializeSpawnPoint);

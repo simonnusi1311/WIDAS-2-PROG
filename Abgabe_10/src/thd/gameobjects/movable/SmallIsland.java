@@ -33,7 +33,7 @@ public class SmallIsland extends CollidingGameObject implements ShiftableGameObj
         rotation = 0;
         width = 40;
         height = 100;
-        hitBoxOffsets(-20, -45, 0, 0);
+        hitBoxOffsets(-15, -45, -10, -7);
         distanceToBackground = 1;
     }
 
@@ -65,7 +65,8 @@ public class SmallIsland extends CollidingGameObject implements ShiftableGameObj
      */
     @Override
     public void addToCanvas() {
-        gameView.addOvalToCanvas(position.getX(), position.getY(), width, height, 4, true, Color.GREEN.darker());
+        gameView.addOvalToCanvas(position.getX(), position.getY(), width - 20, height - 50, 4, true, Color.GREEN.darker());
+        gameView.addImageToCanvas("small_island.png", position.getX() - 50, position.getY() - 50, 0.1, 0);
     }
 
 
