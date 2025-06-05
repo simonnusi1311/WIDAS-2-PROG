@@ -32,13 +32,13 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
         super(gameView, gamePlayManager);
         tankMovementPattern = new TankMovementPattern();
         position.updateCoordinates(tankMovementPattern.startPosition());
-        speedInPixel = 1.3;
+        speedInPixel = 1.8;
         size = 0.80;
         rotation = 0;
         width = 150;
         height = 33;
         hitBoxOffsets(8, 3, -100, 0);
-        distanceToBackground = 2;
+        distanceToBackground = 4;
         shotIsActive = false;
         stopHorizontalMovement = false;
         currentState = tankMovementPattern.movingRight ? State.RIGHT : State.LEFT;

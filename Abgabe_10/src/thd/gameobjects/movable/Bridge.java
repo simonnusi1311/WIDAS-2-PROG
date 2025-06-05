@@ -35,7 +35,7 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
         super(gameView, gamePlayManager);
         bridgeMovementPattern = new BridgeMovementPattern();
         position.updateCoordinates(bridgeMovementPattern.startPosition());
-        speedInPixel = 1.3;
+        speedInPixel = 1.8;
         size = 0.50;
         rotation = 0;
         width = 135;
@@ -49,7 +49,7 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
     }
 
     private enum State {
-        STANDARD, DAMAGED, EXPLODING, EXPLODED
+        STANDARD, DAMAGED, EXPLODED
     }
 
     private enum BridgeDamaged {
@@ -95,10 +95,7 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
             gamePlayManager.destroyGameObject(this);
         }
         switch (currentState) {
-            case EXPLODING -> {
-            }
             case DAMAGED -> {
-
                 if (gameView.timer(60, 0, this) && hitCountForAnimation == 1) {
                     bridgeDamaged = bridgeDamaged.firstHit();
                 } else if (gameView.timer(60, 0, this) && hitCountForAnimation == 2) {
@@ -111,6 +108,7 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
                 if (gameView.timer(100, 0, this)) {
                     if (explosionState == ExplosionState.EXPLOSION_3) {
                         gamePlayManager.addPoints(100);
+                        gamePlayManager.bridgeDestroyed();
                         gamePlayManager.destroyGameObject(this);
                     } else {
                         explosionState = explosionState.next();
@@ -137,8 +135,7 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
         }
         if (other instanceof JetFighter) {
             gamePlayManager.lifeLost();
-            gamePlayManager.bridgeDestroyed();
-            gamePlayManager.destroyGameObject(this);
+            currentState = State.EXPLODED;
         }
     }
 

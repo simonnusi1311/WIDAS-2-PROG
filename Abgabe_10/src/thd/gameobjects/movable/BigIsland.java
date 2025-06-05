@@ -35,7 +35,7 @@ public class BigIsland extends CollidingGameObject implements ShiftableGameObjec
 
     public BigIsland(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 1.3;
+        speedInPixel = 1.8;
         size = 0.50;
         rotation = 0;
         width = 180;

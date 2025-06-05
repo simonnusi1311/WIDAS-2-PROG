@@ -33,7 +33,7 @@ public class Helicopter extends CollidingGameObject implements ShiftableGameObje
         super(gameView, gamePlayManager);
         helicopterMovementPattern = new HelicopterMovementPattern();
         position.updateCoordinates(helicopterMovementPattern.startPosition());
-        speedInPixel = 1.3;
+        speedInPixel = 1.8;
         size = 0.80;
         rotation = 0;
         width = 41;

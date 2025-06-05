@@ -96,7 +96,7 @@ class ShootFromPlayer extends CollidingGameObject {
     @Override
     public void updatePosition() {
         if (currentState == State.EXPLODING) {
-            position.down(1.3);
+            position.down(1.8);
         } else {
             position.up(speedInPixel);
         }

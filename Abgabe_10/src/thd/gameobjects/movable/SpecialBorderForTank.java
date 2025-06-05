@@ -27,13 +27,13 @@ public class SpecialBorderForTank extends CollidingGameObject implements Shiftab
 
     public SpecialBorderForTank(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 1.3;
+        speedInPixel = 1.8;
         size = 0.80;
         rotation = 0;
         width = 50;
         height = 50;
         hitBoxOffsets(0, 0, 0, 0);
-        distanceToBackground = 1;
+        distanceToBackground = 0;
     }
 
     @Override

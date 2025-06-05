@@ -113,7 +113,7 @@ class GameWorldManager extends GamePlayManager {
                     }
                 } else if (character == 'T') {
                     Tank tank = new Tank(gameView, this);
-                    tank.getPosition().updateCoordinates(x, y);
+                    tank.getPosition().updateCoordinates(x, y + 10);
                     tank.initializeTheSpawnPoint(columnIndex < 40);
                     if (lineIndex < level.worldOffsetLines) {
                         addActivatableGameObject(tank);
@@ -158,7 +158,7 @@ class GameWorldManager extends GamePlayManager {
                 } else if (character == 'Z') {
                     RocketLaunch rocketLaunch = new RocketLaunch(gameView, this);
                     rocketLaunch.getPosition().updateCoordinates(x, y);
-                    rocketLaunch.initializeTheSpawnPoint(columnIndex < 40);
+                    rocketLaunch.initializeTheSpawnPointForRocket(columnIndex < 40);
                     if (lineIndex < level.worldOffsetLines) {
                         addActivatableGameObject(rocketLaunch);
                     } else {
@@ -167,7 +167,7 @@ class GameWorldManager extends GamePlayManager {
                 } else if (character == 'A') {
                     Satellite satellite = new Satellite(gameView, this);
                     satellite.getPosition().updateCoordinates(x, y);
-                    satellite.initializeTheSpawnPoint(columnIndex < 40);
+                    satellite.initializeTheSpawnPointForSatellite(columnIndex < 40);
                     if (lineIndex < level.worldOffsetLines) {
                         addActivatableGameObject(satellite);
                     } else {

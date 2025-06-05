@@ -31,7 +31,7 @@ public class Tree extends GameObject implements ShiftableGameObject, Activatable
 
     public Tree(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 1.3;
+        speedInPixel = 1.8;
         size = 0.15;
         rotation = 0;
         width = 30;

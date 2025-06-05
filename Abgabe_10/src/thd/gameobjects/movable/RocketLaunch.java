@@ -28,8 +28,8 @@ public class RocketLaunch extends GameObject implements ShiftableGameObject, Act
 
     public RocketLaunch(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 1.3;
-        size = 0.09;
+        speedInPixel = 1.8;
+        size = 0.08;
         rotation = 0;
         width = 30;
         height = 90;
@@ -77,7 +77,7 @@ public class RocketLaunch extends GameObject implements ShiftableGameObject, Act
      *
      * @param spawnedLeft true if the object spawns on the left side, false if right side.
      */
-    public void initializeTheSpawnPoint(boolean spawnedLeft) {
+    public void initializeTheSpawnPointForRocket(boolean spawnedLeft) {
         this.spawnedLeft = spawnedLeft;
     }
 

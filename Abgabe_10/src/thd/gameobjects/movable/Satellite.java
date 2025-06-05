@@ -27,8 +27,8 @@ public class Satellite extends GameObject implements ShiftableGameObject, Activa
 
     public Satellite(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 1.3;
-        size = 0.09;
+        speedInPixel = 1.8;
+        size = 0.08;
         rotation = 0;
         width = 30;
         height = 90;
@@ -64,9 +64,9 @@ public class Satellite extends GameObject implements ShiftableGameObject, Activa
     @Override
     public void addToCanvas() {
         if (spawnedLeft) {
-            gameView.addImageToCanvas("rocket_launch_right.png", position.getX(), position.getY(), size, 0);
+            gameView.addImageToCanvas("satellite.png", position.getX(), position.getY(), size, 0);
         } else {
-            gameView.addImageToCanvas("rocket_launch_left.png", position.getX(), position.getY(), size, 0);
+            gameView.addImageToCanvas("satellite_left.png", position.getX(), position.getY(), size, 0);
         }
 
 
@@ -78,7 +78,7 @@ public class Satellite extends GameObject implements ShiftableGameObject, Activa
      *
      * @param spawnedLeft true if the object spawns on the left side, false if right side.
      */
-    public void initializeTheSpawnPoint(boolean spawnedLeft) {
+    public void initializeTheSpawnPointForSatellite(boolean spawnedLeft) {
         this.spawnedLeft = spawnedLeft;
     }
 

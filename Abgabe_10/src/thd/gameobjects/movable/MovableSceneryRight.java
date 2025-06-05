@@ -28,7 +28,7 @@ public class MovableSceneryRight extends CollidingGameObject implements Shiftabl
 
     public MovableSceneryRight(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 1.3;
+        speedInPixel = 1.8;
         size = 0.80;
         rotation = 0;
         width = 1000;

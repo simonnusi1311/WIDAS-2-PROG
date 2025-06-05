@@ -26,7 +26,7 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
         rotation = 0;
         width = 9;
         height = 2;
-        distanceToBackground = 2;
+        distanceToBackground = 4;
         hitBoxOffsets(0, 0, 1, 0);
         currentState = State.FLYING;
         shootAnimationState = ShootAnimationState.SHOOT_ANIMATION_1;
@@ -79,7 +79,7 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
     }
 
     private void shootIsImmuneAgainstScenery() {
-        if (!isCollidableWithScenery && gameView.timer(1000, 0, this)) {
+        if (!isCollidableWithScenery && gameView.timer(700, 0, this)) {
             isCollidableWithScenery = true;
         }
     }
@@ -90,7 +90,8 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
             gamePlayManager.destroyGameObject(this);
         }
         if (isCollidableWithScenery && (other instanceof MovableSceneryLeft || other instanceof MovableSceneryRight
-                || other instanceof BigIsland || other instanceof SmallIsland)) {
+                || other instanceof BigIsland || other instanceof SmallIsland || other instanceof IslandTopHitBox
+                || other instanceof IslandTopHitBoxTwo || other instanceof IslandBottomHitBox || other instanceof IslandBottomHitBoxTwo)) {
             if (currentState == State.FLYING) {
                 currentState = State.EXPLODING;
             }
@@ -99,8 +100,10 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
 
     @Override
     public void updatePosition() {
-        if (gamePlayManager.isJetInRespawn()) {
-            position.down(1.3);
+        if (!gamePlayManager.isJetInRespawn()) {
+            position.down(0.18);
+        } else {
+            currentState = State.EXPLODING;
         }
 
         if (currentState == State.FLYING) {

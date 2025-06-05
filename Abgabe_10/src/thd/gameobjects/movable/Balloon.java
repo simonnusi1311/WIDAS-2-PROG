@@ -33,7 +33,7 @@ public class Balloon extends CollidingGameObject implements ShiftableGameObject,
         super(gameView, gamePlayManager);
         balloonMovementPattern = new BalloonMovementPattern();
         position.updateCoordinates(balloonMovementPattern.startPosition());
-        speedInPixel = 1.3;
+        speedInPixel = 1.8;
         size = 0.80;
         rotation = 0;
         width = 28;
