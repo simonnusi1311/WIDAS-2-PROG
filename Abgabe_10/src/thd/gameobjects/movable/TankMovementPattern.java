@@ -1,8 +1,8 @@
 package thd.gameobjects.movable;
 
-import thd.game.utilities.GameView;
 import thd.gameobjects.base.MovementPattern;
 import thd.gameobjects.base.Position;
+import thd.game.utilities.GameView;
 
 class TankMovementPattern extends MovementPattern {
     private final Position patternForTankMovement;

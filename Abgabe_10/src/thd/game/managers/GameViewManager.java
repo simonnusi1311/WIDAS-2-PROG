@@ -1,7 +1,5 @@
 package thd.game.managers;
-
 import thd.game.utilities.GameView;
-
 import java.awt.*;
 
 /**

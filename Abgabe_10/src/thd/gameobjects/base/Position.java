@@ -1,7 +1,5 @@
 package thd.gameobjects.base;
 
-import thd.game.utilities.GameView;
-
 import java.util.Objects;
 
 /**

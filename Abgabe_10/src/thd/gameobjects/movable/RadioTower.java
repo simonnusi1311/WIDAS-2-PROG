@@ -1,10 +1,10 @@
 package thd.gameobjects.movable;
 
 import thd.game.managers.GamePlayManager;
-import thd.game.utilities.GameView;
 import thd.gameobjects.base.*;
 import thd.gameobjects.unmovable.SceneryLeft;
 import thd.gameobjects.unmovable.SceneryRight;
+import thd.game.utilities.GameView;
 
 /**
  * Represents a radio tower in the {@link GameView} windows.

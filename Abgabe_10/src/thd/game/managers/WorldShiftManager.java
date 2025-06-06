@@ -1,9 +1,8 @@
 package thd.game.managers;
 
-import thd.game.utilities.GameView;
 import thd.gameobjects.base.GameObject;
 import thd.gameobjects.base.ShiftableGameObject;
-
+import thd.game.utilities.GameView;
 import java.util.LinkedList;
 import java.util.List;
 

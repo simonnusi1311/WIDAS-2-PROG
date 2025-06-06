@@ -1,5 +1,4 @@
 package thd.gameobjects.movable;
-
 import thd.game.utilities.GameView;
 import thd.gameobjects.base.MovementPattern;
 import thd.gameobjects.base.Position;

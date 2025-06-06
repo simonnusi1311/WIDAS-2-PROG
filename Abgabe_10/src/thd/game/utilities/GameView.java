@@ -96,16 +96,6 @@ public final class GameView {
         this(false);
     }
 
-    /**
-     * Erzeugt ein Test-Objekt von GameView. Das Fenster wird nicht sichtbar. Es wird nur für automatisierte Tests
-     * verwendet.
-     *
-     * @return Ein Test-Objekt von GameView.
-     */
-    public static GameView createGameViewTestEnvironment() {
-        return new GameView(true);
-    }
-
     private GameView(boolean testEnvironmentOnly) {
         instances++;
         statistic = new Statistic();
@@ -123,13 +113,23 @@ public final class GameView {
     }
 
     /**
+     * Erzeugt ein Test-Objekt von GameView. Das Fenster wird nicht sichtbar. Es wird nur für automatisierte Tests
+     * verwendet.
+     *
+     * @return Ein Test-Objekt von GameView.
+     */
+    public static GameView createGameViewTestEnvironment() {
+        return new GameView(true);
+    }
+
+    /**
      * Diese Methode zeigt an, ob das Fenster sichtbar ist oder nicht. Nach dem Schließen des Fensters liefert es
      * false.
      *
      * @return true, falls das Fenster sichtbar ist.
      */
     public boolean isVisible() {
-        return !swingAdapter.paintingThreadHasStopped;
+        return swingAdapter.frame.isVisible();
     }
 
     /**
@@ -1411,8 +1411,6 @@ public final class GameView {
         private double sizeOfImageMapInMB;
         private int imageMapRefreshCounter;
         private volatile boolean blockUntilFontIsLoaded;
-        private Thread paintingThread;
-        private volatile boolean paintingThreadHasStopped;
 
         private SwingAdapter(Statistic statistic) {
             paintingPanel = new PaintingPanel(statistic);
@@ -1426,14 +1424,6 @@ public final class GameView {
 
         private void initialize(boolean testEnvironmentOnly) {
             showWindowAndCreateBufferStrategy(testEnvironmentOnly);
-            paintingThread = new Thread(() -> {
-                while (!paintingThread.isInterrupted()) {
-                    paintingPanel.paintImage();
-                }
-                paintingThreadHasStopped = true;
-            });
-            paintingThread.setDaemon(true);
-            paintingThread.start();
         }
 
         private void showWindowAndCreateBufferStrategy(boolean testEnvironmentOnly) {
@@ -1518,7 +1508,7 @@ public final class GameView {
                     imageFromDisk = ImageIO.read(resourceUrl);
                     Objects.requireNonNull(imageFromDisk,
                             () -> "ImageFile \"" + imageFileName
-                                    + "\" konnte nicht geladen werden oder ist kein gültiges Bildformat!");
+                                  + "\" konnte nicht geladen werden oder ist kein gültiges Bildformat!");
                 } catch (IOException e) {
                     throw new UncheckedIOException("Fehler beim Lesen der Bilddatei: " + imageFileName, e);
                 }
@@ -1665,7 +1655,7 @@ public final class GameView {
         private void setMouseCursor(String cursorImageFileName, boolean centered) {
             URL resourceUrl = GameView.class.getResource(Tools.RESOURCE_PREFIX + cursorImageFileName);
             Objects.requireNonNull(resourceUrl, () -> "Cursor-Datei konnte nicht gefunden werden: "
-                    + Tools.RESOURCE_PREFIX + cursorImageFileName);
+                                                      + Tools.RESOURCE_PREFIX + cursorImageFileName);
             Image im = new ImageIcon(resourceUrl).getImage();
             SwingUtilities.invokeLater(() -> paintingPanel.setCursor(createCursor(im, centered)));
         }
@@ -1691,12 +1681,6 @@ public final class GameView {
 
         // Beenden
         private void closeGameView() {
-            if (paintingThread != null) {
-                paintingThread.interrupt();
-                while (!paintingThreadHasStopped) {
-                    Tools.sleep(50);
-                }
-            }
             sound.stopAllSounds();
             mouse.invisibleMouseTimer.stop();
             frame.dispose();
@@ -1704,6 +1688,10 @@ public final class GameView {
 
         private Dimension getTextDisplaySize() {
             return paintingPanel.getSize();
+        }
+
+        public void paintImage(ArrayList<PrintObject> printObjects, Color backgroundColor) {
+            paintingPanel.paintImage(printObjects, backgroundColor);
         }
     }
 
@@ -1718,17 +1706,12 @@ public final class GameView {
         private java.awt.Rectangle scaledBounds;
         private boolean scaleFactorChanged;
         private AffineTransform scaledTransform;
-        private long lastSleepCheckPoint;
-        private ArrayList<PrintObject> printObjects;
-        private Color backgroundColor;
-        private volatile boolean framePainted;
 
         private PaintingPanel(Statistic statistic) {
             this.statistic = statistic;
             setIgnoreRepaint(true);
             setSize(GameView.WIDTH, GameView.HEIGHT);
             identity = new AffineTransform();
-            framePainted = true;
         }
 
         private void updateScaleFactor() {
@@ -1743,21 +1726,7 @@ public final class GameView {
             scaleFactorChanged = true;
         }
 
-        private void setImageObjects(ArrayList<PrintObject> printObjects, Color backgroundColor) {
-            this.printObjects = printObjects;
-            this.backgroundColor = backgroundColor;
-            framePainted = false;
-        }
-
-        private void paintImage() {
-            if (!framePainted) {
-                statistic.framesCounter++;
-                paintImageToWindow(printObjects, backgroundColor);
-                framePainted = true;
-            }
-        }
-
-        private void paintImageToWindow(ArrayList<PrintObject> printObjects, Color backgroundColor) {
+        private void paintImage(ArrayList<PrintObject> printObjects, Color backgroundColor) {
             do {
                 do {
                     Graphics2D graphics2D = (Graphics2D) canvasBufferStrategy.getDrawGraphics();
@@ -1899,6 +1868,54 @@ public final class GameView {
         }
     }
 
+    private static class Version {
+        private static final int MAJOR = 2;
+        private static final int MINOR = 5;
+        private static final int UPDATE = 0;
+
+        private static final String VERSION = MAJOR + "." + MINOR + "." + UPDATE;
+
+        private static final String STANDARD_TITLE = "GameView";
+        private static final String SIGNATURE = "Prof. Dr. Andreas Berl - TH Deggendorf";
+
+        private static String getStatusSignature() {
+            return "   " + SIGNATURE + " ";
+        }
+
+        private static String getStandardTitle() {
+            return STANDARD_TITLE + " " + VERSION;
+        }
+
+        private static boolean isSmallerThan(String versionString) {
+            String[] split = versionString.split("\\.");
+            int major = Integer.parseInt(split[0]);
+            int minor = Integer.parseInt(split[1]);
+            int update = Integer.parseInt(split[2]);
+            if (MAJOR != major) {
+                return MAJOR < major;
+            } else if (MINOR != minor) {
+                return MINOR < minor;
+            } else if (UPDATE != update) {
+                return UPDATE < update;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    private static class Element {
+        protected static final int FONT_SIZE = 12;
+        protected static final int X_POSITION_1 = 15;
+        protected static int height = 0;
+        protected String name;
+        protected Color color;
+
+        private Element(String name, Color color) {
+            this.name = name;
+            this.color = color;
+        }
+    }
+
     private class Terminal {
         public void plotTerminal(String text, String resolution) {
             Resolution res = Resolution.fromString(resolution);
@@ -1913,7 +1930,17 @@ public final class GameView {
                     }
                 }
             }
+            repairFrameTimingInCaseOfExternalThreadSleep();
             plotCanvas();
+        }
+
+        private void repairFrameTimingInCaseOfExternalThreadSleep() {
+            long timePassedSinceStartOfSecond = System.nanoTime() - gameLoop.startOfSecond;
+            long timeThatShouldHavePassed = Math.round(gameLoop.currentFrame * GameLoop.NANOS_PER_FRAME);
+            if (timePassedSinceStartOfSecond > timeThatShouldHavePassed) {
+                gameLoop.currentFrame = 1;
+                gameLoop.startOfSecond = System.nanoTime();
+            }
         }
 
         private enum Resolution {
@@ -2011,6 +2038,8 @@ public final class GameView {
     }
 
     private class Statistic {
+
+        private final StatisticBox statisticBox;
         private long gameLogicStartTime;
         private long gameLogicAverageDuration;
         private long drawImageStartTime;
@@ -2022,80 +2051,47 @@ public final class GameView {
         private int cyclesCounter;
         private int framesCounter;
         private int invisiblePrintObjects;
-        private int boxYPosition;
 
-        private int loopsPerSecondValue;
-        private int framesPerSecondValue;
-        private int gameViewValue;
-        private int graphicValue;
-        private int gameValue;
-        private int visibleValue;
-        private int invisibleValue;
-        private int bufferSizeValue;
-        private int bufferOverflowValue;
-        private boolean started;
+        private Statistic() {
+            statisticBox = new StatisticBox();
+        }
 
         private void updateStatistic() {
             long currentTime = System.currentTimeMillis();
             long timePassed = currentTime - lastStatisticsUpdateTime;
             if (timePassed > 1_000) {
-                if (!started) {
-                    started = true;
-                    loopsPerSecondValue = 60;
-                    framesPerSecondValue = 60;
-                    cyclesCounter = 0;
-                    framesCounter = 0;
-                    gameViewValue = 1;
-                    graphicValue = 1;
-                    gameValue = 1;
-                    lastStatisticsUpdateTime = currentTime;
+                if (firstCall()) {
+                    lastStatisticsUpdateTime = System.currentTimeMillis();
                     return;
                 }
                 // FPS
-                loopsPerSecondValue = cyclesCounter;
-                framesPerSecondValue = framesCounter;
+                statisticBox.loopsPerSecondValue = cyclesCounter;
+                statisticBox.framesPerSecondValue = framesCounter;
                 cyclesCounter = 0;
                 framesCounter = 0;
 
                 // Average Times
-                gameViewValue = (int) Math.max(1, drawImageAverageDuration);
-                graphicValue = (int) Math.max(1, paintImageAverageDuration);
-                gameValue = (int) Math.max(1, gameLogicAverageDuration);
+                statisticBox.gameViewValue = (int) Math.max(1, drawImageAverageDuration);
+                statisticBox.graphicValue = (int) Math.max(1, paintImageAverageDuration);
+                statisticBox.gameValue = (int) Math.max(1, gameLogicAverageDuration);
 
                 // PrintObjects
                 int numberOfStatisticObjects = 35; // SimpleStartScreen has 8 PrintObjects
-                visibleValue = Math.max(0, swingAdapter.paintingPanel.printObjects.size() - numberOfStatisticObjects);
-                invisibleValue = invisiblePrintObjects;
+                statisticBox.visibleValue = Math.max(0, canvas.printObjects.size() - numberOfStatisticObjects);
+                statisticBox.invisibleValue = invisiblePrintObjects;
 
                 // Image buffer
-                bufferSizeValue = (int) swingAdapter.sizeOfImageMapInMB;
-                bufferOverflowValue = swingAdapter.imageMapRefreshCounter;
+                statisticBox.bufferSizeValue = (int) swingAdapter.sizeOfImageMapInMB;
+                statisticBox.bufferOverflowValue = swingAdapter.imageMapRefreshCounter;
                 lastStatisticsUpdateTime = currentTime;
             }
             if (showStatistics) {
-                boxYPosition = 5;
-                addBox(new Title("Bildraten"), new Line("Loops/Sekunde:", loopsPerSecondValue, null, false, 54, 50), new Line("Bilder/Sekunde:", framesPerSecondValue, null, false, 50, 28));
-                addBox(new Title("16 ms pro Bild"), new Line("GameView:", gameViewValue, "ms", true, 10, 20), new Line("Grafikkarte:", graphicValue, "ms", true, 15, 20), new Line("Spiel-Logik:", gameValue, "ms", true, 2, 3));
-                addBox(new Title("Spiel-Objekte"), new Line("Sichtbar:", visibleValue, null, true, 200, 300), new Line("Unsichtbar:", invisibleValue, null, true, 100, 200));
-                addBox(new Title("Bildpuffer"), new Line("Größe:", bufferSizeValue, "MB", true, 500, 700), new Line("Überläufe:", bufferOverflowValue, null, true, 1, 2));
+                statisticBox.paintStatisticBox();
             }
         }
 
-        private void addBox(Title title, Line... lines) {
-            int boxXPosition = 5;
-            int gap = 5;
-            int width = 175;
-            int height = 3 * gap + Title.height + lines.length * Line.height;
-            addRectangleToCanvas(boxXPosition + 1, boxYPosition + 1, width, height, 0, true, Color.BLACK);
-            addRectangleToCanvas(boxXPosition, boxYPosition, width, height, 2, false, Color.WHITE);
-            boxYPosition += gap;
-            title.add(boxYPosition);
-            boxYPosition += Title.height + gap;
-            for (Line line : lines) {
-                line.add(boxYPosition);
-                boxYPosition += Line.height;
-            }
-            boxYPosition += gap;
+        private boolean firstCall() {
+            return lastStatisticsUpdateTime == 0;
         }
 
         private void gameLogicTic() {
@@ -2125,18 +2121,60 @@ public final class GameView {
         private long toc(long currentAverage, long startTime) {
             return Math.min(100, (4 * currentAverage + System.currentTimeMillis() - startTime) / 5);
         }
+    }
 
-        private static class Element {
-            protected static final int FONT_SIZE = 12;
-            protected static final int X_POSITION_1 = 15;
-            protected static int height = 0;
-            protected String name;
-            protected Color color;
+    private class StatisticBox {
+        private int boxYPosition;
+        private int loopsPerSecondValue;
+        private int framesPerSecondValue;
+        private int gameViewValue;
+        private int graphicValue;
+        private int gameValue;
+        private int visibleValue;
+        private int invisibleValue;
+        private int bufferSizeValue;
+        private int bufferOverflowValue;
 
-            private Element(String name, Color color) {
-                this.name = name;
-                this.color = color;
+        private StatisticBox() {
+            loopsPerSecondValue = GameLoop.FRAMES_PER_SECOND;
+            framesPerSecondValue = GameLoop.FRAMES_PER_SECOND;
+            gameViewValue = 1;
+            graphicValue = 1;
+            gameValue = 1;
+        }
+
+        private void paintStatisticBox() {
+            boxYPosition = 5;
+            addBox(new Title("Bildraten"),
+                    new Line("Loops/Sekunde:", loopsPerSecondValue, null, false, 54, 50),
+                    new Line("Bilder/Sekunde:", framesPerSecondValue, null, false, 50, 28));
+            addBox(new Title("16 ms pro Bild"),
+                    new Line("GameView:", gameViewValue, "ms", true, 10, 20),
+                    new Line("Fenster:", graphicValue, "ms", true, 15, 20),
+                    new Line("Spiel-Logik:", gameValue, "ms", true, 2, 3));
+            addBox(new Title("Spiel-Objekte"),
+                    new Line("Sichtbar:", visibleValue, null, true, 200, 300),
+                    new Line("Unsichtbar:", invisibleValue, null, true, 100, 200));
+            addBox(new Title("Bildpuffer"),
+                    new Line("Größe:", bufferSizeValue, "MB", true, 500, 700),
+                    new Line("Überläufe:", bufferOverflowValue, null, true, 1, 2));
+        }
+
+        private void addBox(Title title, Line... lines) {
+            int boxXPosition = 5;
+            int gap = 5;
+            int width = 175;
+            int height = 3 * gap + Title.height + lines.length * Line.height;
+            addRectangleToCanvas(boxXPosition + 1, boxYPosition + 1, width, height, 0, true, Color.BLACK);
+            addRectangleToCanvas(boxXPosition, boxYPosition, width, height, 2, false, Color.WHITE);
+            boxYPosition += gap;
+            title.add(boxYPosition);
+            boxYPosition += Title.height + gap;
+            for (Line line : lines) {
+                line.add(boxYPosition);
+                boxYPosition += Line.height;
             }
+            boxYPosition += gap;
         }
 
         private class Title extends Element {
@@ -2211,35 +2249,39 @@ public final class GameView {
     }
 
     private class GameLoop {
-        private static final double FRAMES_PER_SECOND = 65.0;
-        private static final long NANOS_PER_FRAME = (long) (1_000_000_000 / FRAMES_PER_SECOND);
-        private long lastFrameTime;
+        private static final int FRAMES_PER_SECOND = 60;
+        private static final double NANOS_PER_FRAME = 1_000_000_000d / FRAMES_PER_SECOND;
+        private long startOfSecond;
+        private int currentFrame;
 
         private GameLoop() {
-            lastFrameTime = System.nanoTime();
             statistic.gameLogicTic();
+            currentFrame = FRAMES_PER_SECOND; // Wird in der ersten Schleife auf 0 gesetzt
         }
 
         private void plotCanvas() {
             statistic.gameLogicToc();
             statistic.cyclesCounter++;
-            if (swingAdapter.paintingPanel.framePainted) {
-                statistic.updateStatistic();
-                swingAdapter.paintingPanel.setImageObjects(canvas.printObjects, canvas.backgroundColor);
-                canvas.printObjects = new ArrayList<>();
-            } else {
-                canvas.printObjects.clear();
-            }
+            statistic.updateStatistic();
+            swingAdapter.paintImage(canvas.printObjects, canvas.backgroundColor);
+            statistic.framesCounter++;
+            canvas.printObjects.clear();
             statistic.invisiblePrintObjects = 0;
             sleepUntilEndOfFrame();
             statistic.gameLogicTic();
         }
 
         private void sleepUntilEndOfFrame() {
-            long timePassed = System.nanoTime() - lastFrameTime;
-            long sleepTime = NANOS_PER_FRAME - timePassed;
+            long timePassedSinceStartOfSecond = System.nanoTime() - startOfSecond;
+            long timeThatShouldHavePassed = Math.round(currentFrame * NANOS_PER_FRAME);
+            long sleepTime = timeThatShouldHavePassed - timePassedSinceStartOfSecond;
             LockSupport.parkNanos(sleepTime);
-            lastFrameTime = System.nanoTime();
+            if (currentFrame == FRAMES_PER_SECOND) {
+                currentFrame = 1;
+                startOfSecond = System.nanoTime();
+            } else {
+                currentFrame++;
+            }
         }
     }
 
@@ -2300,41 +2342,6 @@ public final class GameView {
         public void closeGameView() {
             swingAdapter.closeGameView();
             instances--;
-        }
-    }
-
-    private static class Version {
-        private static final int MAJOR = 2;
-        private static final int MINOR = 4;
-        private static final int UPDATE = 3;
-
-        private static final String VERSION = MAJOR + "." + MINOR + "." + UPDATE;
-
-        private static final String STANDARD_TITLE = "GameView";
-        private static final String SIGNATURE = "Prof. Dr. Andreas Berl - TH Deggendorf";
-
-        private static String getStatusSignature() {
-            return "   " + SIGNATURE + " ";
-        }
-
-        private static String getStandardTitle() {
-            return STANDARD_TITLE + " " + VERSION;
-        }
-
-        private static boolean isSmallerThan(String versionString) {
-            String[] split = versionString.split("\\.");
-            int major = Integer.parseInt(split[0]);
-            int minor = Integer.parseInt(split[1]);
-            int update = Integer.parseInt(split[2]);
-            if (MAJOR != major) {
-                return MAJOR < major;
-            } else if (MINOR != minor) {
-                return MINOR < minor;
-            } else if (UPDATE != update) {
-                return UPDATE < update;
-            } else {
-                return false;
-            }
         }
     }
 }
