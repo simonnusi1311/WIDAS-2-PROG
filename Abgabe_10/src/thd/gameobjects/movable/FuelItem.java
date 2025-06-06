@@ -29,7 +29,7 @@ public class FuelItem extends CollidingGameObject implements ShiftableGameObject
         super(gameView, gamePlayManager);
         fuelItemMovementPattern = new FuelItemMovementPattern();
         position.updateCoordinates(fuelItemMovementPattern.startPosition());
-        speedInPixel = 1.8;
+        speedInPixel = 2.2;
         size = 0.80;
         rotation = 0;
         width = 30;

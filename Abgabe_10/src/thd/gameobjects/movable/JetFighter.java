@@ -320,11 +320,11 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
     private void handleSpeedLogicOrFreeze() {
         if (currentState == State.FLYING) {
             if (increaseTheSpeed) {
-                gamePlayManager.moveWorldDown(2.5);
+                gamePlayManager.moveWorldDown(1.8);
                 redFuelBar.getPosition().left(0.15);
             }
         } else if (currentState == State.EXPLODING || currentState == State.RESPAWNING) {
-            gamePlayManager.moveWorldUp(1.8);
+            gamePlayManager.moveWorldUp(2.2);
         }
     }
 

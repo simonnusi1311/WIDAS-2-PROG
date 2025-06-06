@@ -32,7 +32,7 @@ public class Ship extends CollidingGameObject implements ShiftableGameObject, Ac
         super(gameView, gamePlayManager);
         shipMovementPattern = new ShipMovementPattern();
         position.updateCoordinates(shipMovementPattern.startPosition());
-        speedInPixel = 1.8;
+        speedInPixel = 2.2;
         size = 0.80;
         rotation = 0;
         width = 70;

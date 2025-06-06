@@ -28,7 +28,7 @@ public class MovableSceneryLeft extends CollidingGameObject implements Shiftable
 
     public MovableSceneryLeft(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 1.8;
+        speedInPixel = 2.2;
         size = 0.80;
         rotation = 0;
         width = 800;

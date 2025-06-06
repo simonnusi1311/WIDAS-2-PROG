@@ -26,7 +26,7 @@ public class RadioTower extends GameObject implements ShiftableGameObject, Activ
 
     public RadioTower(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 1.8;
+        speedInPixel = 2.2;
         size = 0.09;
         rotation = 0;
         width = 30;

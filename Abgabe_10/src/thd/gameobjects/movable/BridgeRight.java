@@ -30,7 +30,7 @@ public class BridgeRight extends CollidingGameObject implements ShiftableGameObj
     public BridgeRight(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
         position.updateCoordinates((GameView.WIDTH / 2.0) + 95, -74);
-        speedInPixel = 1.8;
+        speedInPixel = 2.2;
         rotation = 0;
         width = (GameView.WIDTH / 2.0) - 42;
         height = 65;

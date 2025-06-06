@@ -28,7 +28,7 @@ class IslandBottomHitBoxTwo extends CollidingGameObject implements ShiftableGame
 
     IslandBottomHitBoxTwo(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 1.8;
+        speedInPixel = 2.2;
         size = 0.50;
         rotation = 0;
         width = 180;

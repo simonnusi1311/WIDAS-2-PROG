@@ -35,7 +35,7 @@ public class Bridge extends CollidingGameObject implements ShiftableGameObject, 
         super(gameView, gamePlayManager);
         bridgeMovementPattern = new BridgeMovementPattern();
         position.updateCoordinates(bridgeMovementPattern.startPosition());
-        speedInPixel = 1.8;
+        speedInPixel = 2.2;
         size = 0.50;
         rotation = 0;
         width = 135;

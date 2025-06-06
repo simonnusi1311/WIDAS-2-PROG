@@ -27,7 +27,7 @@ public class Satellite extends GameObject implements ShiftableGameObject, Activa
 
     public Satellite(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 1.8;
+        speedInPixel = 2.2;
         size = 0.08;
         rotation = 0;
         width = 30;
