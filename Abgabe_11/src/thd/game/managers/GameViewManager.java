@@ -1,5 +1,7 @@
 package thd.game.managers;
+
 import thd.game.utilities.GameView;
+
 import java.awt.*;
 
 /**
@@ -21,11 +23,16 @@ public class GameViewManager {
     public GameViewManager() {
         gameView = new GameView();
         gameManager = new GameManager(gameView);
+        initialize();
+        startGameLoop();
+    }
+
+    private void initialize() {
         gameView.updateWindowTitle("River Raid");
         gameView.updateStatusText("Simon Nuspahic - Java Programmierung SS 2025");
         gameView.updateWindowIcon("icon.png");
         gameView.updateBackgroundColor(new Color(0, 100, 255));
-        startGameLoop();
+        gameView.showStatistic(true);
     }
 
     private void startGameLoop() {

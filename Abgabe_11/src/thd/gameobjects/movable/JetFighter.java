@@ -171,7 +171,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      * Increase the speed and sets increaseTheSpeed on true.
      */
     public void speedUp() {
-        if (currentState == State.FLYING) {
+        if (currentState == State.FLYING && !wasRespawnBeforeFlying) {
             increaseTheSpeed = true;
         }
     }
@@ -286,7 +286,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         switch (currentState) {
             case FLYING -> {
                 if (wasRespawnBeforeFlying) {
-                    gameView.stopSound(id3);
+                    increaseTheSpeed = false;
                     speedSoundIsPlaying = false;
                     wasRespawnBeforeFlying = false;
                 }
@@ -294,7 +294,6 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
                 if (!jetSoundIsPlaying) {
                     id = gameView.playSound("jetfighter_flight.wav", true);
                     jetSoundIsPlaying = true;
-                    speedSoundIsPlaying = false;
                 }
 
                 if (isFlyingRight) {
@@ -332,6 +331,11 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
                     explosionState = explosionState.next();
                 }
                 if (explosionState == ExplosionState.EXPLOSION_3) {
+                    if (speedSoundIsPlaying) {
+                        gameView.stopSound(id3);
+                        speedSoundIsPlaying = false;
+                    }
+
                     position.updateCoordinates(findSafeRespawnPosition());
                     currentState = State.RESPAWNING;
                     isInRespawnPhase = true;
@@ -342,9 +346,11 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
             }
             case RESPAWNING -> {
                 if (jetSoundIsPlaying) {
+                    gameView.stopSound(id3);
                     jetSoundIsPlaying = false;
                 }
                 if (speedSoundIsPlaying) {
+                    gameView.stopSound(id3);
                     speedSoundIsPlaying = false;
                 }
                 flyingState = FlyingState.FLYING_STANDARD;
@@ -354,6 +360,10 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
                 }
 
                 if (gameView.timer(1000, 0, this)) {
+                    if (speedSoundIsPlaying) {
+                        gameView.stopSound(id3);
+                    }
+                    speedSoundIsPlaying = false;
                     currentState = State.FLYING;
                     isInRespawnPhase = false;
                     blinkVisible = true;
@@ -383,10 +393,6 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
     }
 
     private void handleSpeedLogicOrFreeze() {
-        if (!increaseTheSpeed && speedSoundIsPlaying) {
-            gameView.stopSound(id3);
-            speedSoundIsPlaying = false;
-        }
         if (currentState == State.FLYING) {
             if (increaseTheSpeed) {
                 gamePlayManager.moveWorldDown(1.8);
