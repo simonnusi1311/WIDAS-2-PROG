@@ -105,7 +105,7 @@ public class GamePlayManager extends WorldShiftManager {
     /**
      * Increase the level section in {@link StatusBar} by one.
      */
-    public void levelCounter() {
+    private void levelCounter() {
         statusBar.increaseLevelCounterByOne();
     }
 

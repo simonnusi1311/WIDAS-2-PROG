@@ -24,6 +24,7 @@ public class GameViewManager {
         gameView = new GameView();
         gameManager = new GameManager(gameView);
         initialize();
+        gameView.showStatistic(true);
         startGameLoop();
     }
 
@@ -32,7 +33,6 @@ public class GameViewManager {
         gameView.updateStatusText("Simon Nuspahic - Java Programmierung SS 2025");
         gameView.updateWindowIcon("icon.png");
         gameView.updateBackgroundColor(new Color(0, 100, 255));
-        gameView.showStatistic(true);
     }
 
     private void startGameLoop() {
