@@ -20,7 +20,7 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
     private boolean shotIsActive;
     private boolean stopHorizontalMovement;
     private State currentState;
-
+    private boolean shootSoundFromTank;
 
     /**
      * Creates a new ship object with default position, speed, size and other properties.
@@ -101,6 +101,10 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
 
     private void changeShootToActive(ShootFromTank shootFromTank) {
         if (position.getY() >= 585) {
+            if (!shootSoundFromTank) {
+                gameView.playSound("tank_shoot.wav", false);
+                shootSoundFromTank = true;
+            }
             gamePlayManager.spawnGameObject(shootFromTank);
             shotIsActive = true;
         }

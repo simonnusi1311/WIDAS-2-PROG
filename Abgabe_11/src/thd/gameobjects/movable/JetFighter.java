@@ -398,7 +398,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
                 gamePlayManager.moveWorldDown(1.8);
                 redFuelBar.getPosition().left(0.15);
                 if (!speedSoundIsPlaying) {
-                    id3 = gameView.playSound("speed_up2.wav", true);
+                    id3 = gameView.playSound("speed_up.wav", true);
                     speedSoundIsPlaying = true;
                     if (isInRespawnPhase) {
                         gameView.stopSound(id3);
