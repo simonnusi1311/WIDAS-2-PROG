@@ -33,7 +33,7 @@ public class GamePlayManager extends WorldShiftManager {
      * a another gaming object or if he gets hit by the tanks shot.
      */
     public void lifeLost() {
-        //lives--;
+        lives--;
         lifeCounter.setLifeCounter(lives);
         if (lives == 0) {
             gameView.stopAllSounds();

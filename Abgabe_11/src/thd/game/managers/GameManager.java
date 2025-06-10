@@ -2,6 +2,7 @@ package thd.game.managers;
 
 import thd.game.level.Difficulty;
 import thd.game.level.Level;
+import thd.game.utilities.FileAccess;
 import thd.game.utilities.GameView;
 
 class GameManager extends LevelManager {
@@ -48,7 +49,9 @@ class GameManager extends LevelManager {
     }
 
     private void startNewGame() {
+        Level.difficulty = FileAccess.readDifficultyFromDisc();
         Level.difficulty = Difficulty.EASY;
+        FileAccess.writeDifficultyToDisc(Level.difficulty);
         initializeGame();
     }
 

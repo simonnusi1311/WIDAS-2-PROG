@@ -137,7 +137,6 @@ public class Tank extends CollidingGameObject implements ShiftableGameObject, Ac
         tankMovementPattern.gamingObjectCanMoveHorizontal(this);
     }
 
-
     /**
      * Returns the movement pattern of the tank.
      * This pattern determines the direction in which the shoot appears and moves.

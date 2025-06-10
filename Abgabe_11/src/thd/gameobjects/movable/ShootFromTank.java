@@ -21,7 +21,7 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
     ShootFromTank(GameView gameView, GamePlayManager gamePlayManager, Tank tank) {
         super(gameView, gamePlayManager);
         this.tank = tank;
-        speedInPixel = 7;
+        speedInPixel = 5.5;
         size = 0.80;
         rotation = 0;
         width = 9;

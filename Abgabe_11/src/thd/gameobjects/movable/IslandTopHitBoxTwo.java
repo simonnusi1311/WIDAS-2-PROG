@@ -33,7 +33,7 @@ class IslandTopHitBoxTwo extends CollidingGameObject implements ShiftableGameObj
         rotation = 0;
         width = 180;
         height = 1500;
-        hitBoxOffsets(-30, -60, -125, -1400);
+        hitBoxOffsets(-29, -55, -130, -1400);
         distanceToBackground = 1;
     }
 
