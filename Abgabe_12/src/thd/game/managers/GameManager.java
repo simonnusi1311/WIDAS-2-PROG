@@ -33,11 +33,22 @@ class GameManager extends LevelManager {
         if (endOfGame()) {
             if (!messageGameOverAlreadyDisplayed) {
                 messageGameOverAlreadyDisplayed = true;
+
+                if (!hasNextLevel()) {
+                    gameView.stopAllSounds();
+                    Screens.showEndScreen(gameView, "Sie haben: " + score.showThePointsAtEndingScreen() + " Punkte erreicht!");
+                    destroyAllGameObjects();
+                    startNewGame();
+                    return;
+                }
+
+                gameView.playSound("game_over.wav", false);
                 overlay.showMessage("Game Over", 2);
             } else if (!overlay.isMessageShown() && !endScreenAlreadyShown) {
+                gameView.stopAllSounds();
                 Screens.showEndScreen(
                         gameView,
-                        "Sie haben: " + score.showThePointsAtEndingScreen() + " erreicht!"
+                        "Sie haben: " + score.showThePointsAtEndingScreen() + " Punkte erreicht!"
                 );
                 endScreenAlreadyShown = true;
             } else if (endScreenAlreadyShown && !overlay.isMessageShown()) {
@@ -62,10 +73,16 @@ class GameManager extends LevelManager {
         messageGameOverAlreadyDisplayed = false;
         jetFighter.resetJetFighter();
         Level.difficulty = FileAccess.readDifficultyFromDisc();
+        int id = gameView.playSound("start_music.wav", true);
         String chosenDifficulty = Screens.showStartScreen(gameView, GameInfo.TITLE, GameInfo.DESCRIPTION, Level.difficulty.name);
+        gameView.stopSound(id);
         Level.difficulty = Difficulty.fromName(chosenDifficulty);
         FileAccess.writeDifficultyToDisc(Level.difficulty);
-        lives = 5;
+        if (Level.difficulty == Difficulty.EASY) {
+            lives = 8;
+        } else {
+            lives = 6;
+        }
         lifeCounter.setLifeCounter(lives);
         initializeGame();
     }

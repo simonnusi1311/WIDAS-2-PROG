@@ -9,7 +9,7 @@ public class Level4 extends Level {
      * and enemies.
      */
     public Level4() {
-        name = "LevelFour";
+        name = "Level Four";
         number = 4;
         world = """
                 .................................................C.................EA...............................................\s

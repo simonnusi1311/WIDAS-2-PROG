@@ -1,5 +1,7 @@
 package thd.gameobjects.movable;
 
+import thd.game.level.Difficulty;
+import thd.game.level.Level;
 import thd.game.managers.GamePlayManager;
 import thd.gameobjects.base.*;
 import thd.gameobjects.unmovable.SceneryLeft;
@@ -31,7 +33,11 @@ public class Tree extends GameObject implements ShiftableGameObject, Activatable
 
     public Tree(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
-        speedInPixel = 2.2;
+        if (Level.difficulty == Difficulty.EASY) {
+            speedInPixel = 1.8;
+        } else {
+            speedInPixel = 2.2;
+        }
         size = 0.15;
         rotation = 0;
         width = 30;

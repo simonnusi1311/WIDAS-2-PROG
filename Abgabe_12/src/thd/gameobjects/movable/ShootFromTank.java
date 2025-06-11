@@ -1,5 +1,7 @@
 package thd.gameobjects.movable;
 
+import thd.game.level.Difficulty;
+import thd.game.level.Level;
 import thd.game.managers.GamePlayManager;
 import thd.gameobjects.base.CollidingGameObject;
 import thd.gameobjects.base.Position;
@@ -17,11 +19,18 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
     private State currentState;
     private ShootAnimationState shootAnimationState;
     private boolean isCollidableWithScenery;
+    private double pixelForShootFromTank;
 
     ShootFromTank(GameView gameView, GamePlayManager gamePlayManager, Tank tank) {
         super(gameView, gamePlayManager);
         this.tank = tank;
-        speedInPixel = 5.5;
+        if (Level.difficulty == Difficulty.EASY) {
+            pixelForShootFromTank = 0.15;
+            speedInPixel = 4.0;
+        } else {
+            pixelForShootFromTank = 0.18;
+            speedInPixel = 5.5;
+        }
         size = 0.80;
         rotation = 0;
         width = 9;
@@ -101,7 +110,7 @@ class ShootFromTank extends CollidingGameObject implements ShiftableGameObject {
     @Override
     public void updatePosition() {
         if (!gamePlayManager.isJetInRespawn()) {
-            position.down(0.18);
+            position.down(pixelForShootFromTank);
         } else {
             currentState = State.EXPLODING;
         }

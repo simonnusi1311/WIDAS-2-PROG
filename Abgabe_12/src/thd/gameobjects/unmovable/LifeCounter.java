@@ -1,10 +1,13 @@
 package thd.gameobjects.unmovable;
 
+import thd.game.level.Difficulty;
+import thd.game.level.Level;
 import thd.game.managers.GamePlayManager;
 import thd.gameobjects.base.GameObject;
 import thd.gameobjects.base.Position;
 import thd.gameobjects.movable.JetFighter;
 import thd.game.utilities.GameView;
+
 import java.awt.*;
 
 /**
@@ -33,7 +36,11 @@ public class LifeCounter extends GameObject {
         rotation = 0;
         width = 70;
         height = 670;
-        lifeCounter = 5;
+        if (Level.difficulty == Difficulty.EASY) {
+            lifeCounter = 8;
+        } else {
+            lifeCounter = 6;
+        }
         distanceToBackground = 5;
     }
 
@@ -45,6 +52,13 @@ public class LifeCounter extends GameObject {
      */
     public void setLifeCounter(int lifeCounter) {
         this.lifeCounter = lifeCounter;
+    }
+
+    @Override
+    public void updateStatus() {
+        if (lifeCounter <= 0) {
+            gamePlayManager.moveWorldUp(2.2);
+        }
     }
 
     /**

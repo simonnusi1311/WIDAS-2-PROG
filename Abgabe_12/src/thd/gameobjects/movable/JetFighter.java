@@ -1,5 +1,7 @@
 package thd.gameobjects.movable;
 
+import thd.game.level.Difficulty;
+import thd.game.level.Level;
 import thd.game.managers.GamePlayManager;
 import thd.gameobjects.base.CollidingGameObject;
 import thd.gameobjects.base.ExplosionState;
@@ -120,7 +122,9 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      * @see Position
      */
     public void left() {
-        position.left(speedInPixel);
+        if (gamePlayManager.getLives() > 0) {
+            position.left(speedInPixel);
+        }
         isFlyingLeft = true;
         for (CollidingGameObject collidingGameObject : collidingGameObjectsForPathDecision) {
             if (collidesWith(collidingGameObject) && isBlockingObject(collidingGameObject)) {
@@ -136,7 +140,9 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      * @see Position
      */
     public void right() {
-        position.right(speedInPixel);
+        if (gamePlayManager.getLives() > 0) {
+            position.right(speedInPixel);
+        }
         isFlyingRight = true;
         for (CollidingGameObject collidingGameObject : collidingGameObjectsForPathDecision) {
             if (collidesWith(collidingGameObject) && isBlockingObject(collidingGameObject)) {
@@ -171,7 +177,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
      * Increase the speed and sets increaseTheSpeed on true.
      */
     public void speedUp() {
-        if (currentState == State.FLYING && !wasRespawnBeforeFlying) {
+        if (currentState == State.FLYING && !wasRespawnBeforeFlying && gamePlayManager.getLives() > 0) {
             increaseTheSpeed = true;
         }
     }
@@ -201,8 +207,8 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         }
 
         if (!isInvincible() && (isEnemyCollidingWithJet(other) || isSceneryCollidingWithJet(other))) {
-            gamePlayManager.lifeLost();
             triggerExplosion();
+            gamePlayManager.lifeLost();
         }
     }
 
@@ -295,7 +301,6 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
                     id = gameView.playSound("jetfighter_flight.wav", true);
                     jetSoundIsPlaying = true;
                 }
-
                 if (isFlyingRight) {
                     flyingState = FlyingState.FLYING_RIGHT;
                 } else if (isFlyingLeft) {
@@ -409,7 +414,11 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
                 speedSoundIsPlaying = false;
             }
         } else if (currentState == State.EXPLODING || currentState == State.RESPAWNING) {
-            gamePlayManager.moveWorldUp(2.2);
+            if (Level.difficulty == Difficulty.EASY) {
+                gamePlayManager.moveWorldUp(1.8);
+            } else {
+                gamePlayManager.moveWorldUp(2.2);
+            }
             if (speedSoundIsPlaying) {
                 gameView.stopSound(id3);
             }

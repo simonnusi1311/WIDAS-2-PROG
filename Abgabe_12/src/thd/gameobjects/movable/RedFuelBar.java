@@ -1,5 +1,7 @@
 package thd.gameobjects.movable;
 
+import thd.game.level.Difficulty;
+import thd.game.level.Level;
 import thd.game.managers.GamePlayManager;
 import thd.gameobjects.base.GameObject;
 import thd.gameobjects.unmovable.FuelGage;
@@ -22,6 +24,7 @@ public class RedFuelBar extends GameObject {
     private boolean jetHitsFuelItem;
     private boolean alarmSoundIsPlaying;
     private int id;
+    private double pixelForBoostToRight;
 
     /**
      * Creates a new red rectangle object in the {@link FuelGage}
@@ -34,7 +37,13 @@ public class RedFuelBar extends GameObject {
     public RedFuelBar(GameView gameView, GamePlayManager gamePlayManager) {
         super(gameView, gamePlayManager);
         position.updateCoordinates((GameView.WIDTH / 2.0) + 155, GameView.HEIGHT - 60);
-        speedInPixel = 0.05;
+        if (Level.difficulty == Difficulty.EASY) {
+            speedInPixel = 0.02;
+            pixelForBoostToRight = 0.65;
+        } else {
+            speedInPixel = 0.05;
+            pixelForBoostToRight = 0.60;
+        }
         width = 8;
         height = 25;
         distanceToBackground = 6;
@@ -69,7 +78,7 @@ public class RedFuelBar extends GameObject {
         stopMovingIfHitsLeftBoundary();
         stopMovingIfHitsRightBoundary();
         if (jetHitsFuelItem) {
-            position.right(speedInPixel + 0.50);
+            position.right(speedInPixel + pixelForBoostToRight);
         } else if (!gamePlayManager.isJetInRespawn()) {
             position.left(speedInPixel);
         }

@@ -9,7 +9,7 @@ import java.util.List;
 
 class LevelManager extends GameWorldManager {
     private List<Level> levels;
-    private static final int LIVES = 5;
+    private static final int LIVES = 6;
 
     protected LevelManager(GameView gameView) {
         super(gameView);
@@ -23,7 +23,7 @@ class LevelManager extends GameWorldManager {
     }
 
     protected void initializeGame() {
-        levels = List.of(new Level1(), new Level2(), new Level3(), new Level4(), new Level5());
+        levels = List.of(new Level1(), new Level2(), new Level3(), new Level4(), new Level5(), new Level6(), new Level7(), new Level8(), new Level9(), new Level10());
         level = levels.get(0);
         lives = LIVES;
         points = 0;
@@ -44,7 +44,6 @@ class LevelManager extends GameWorldManager {
         }
     }
 
-    //Kopieren Sie diesen Text als Kommentar zur Erinnerung für später in diese Methode.
     private void initializeGameObjects() {
         for (CollidingGameObject collidingGameObject : getPathDecisionObjects()) {
             jetFighter.addPathDecisionObjects(collidingGameObject);

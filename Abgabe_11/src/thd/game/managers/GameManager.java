@@ -33,6 +33,10 @@ class GameManager extends LevelManager {
                 messageGameOverAlreadyDisplayed = true;
                 overlay.showMessage("Game Over", 2);
             }
+            if (gameView.timer(0, 0, this)) {
+                moveWorldUp(2.2);
+            }
+
             if (!overlay.isMessageShown()) {
                 overlay.stopShowing();
                 messageGameOverAlreadyDisplayed = false;

@@ -50,7 +50,7 @@ public class GamePlayManager extends WorldShiftManager {
      */
     public void fuelIsEmpty() {
         lifeCounter.setLifeCounter(0);
-        destroyGameObject(jetFighter);
+        lives = 0;
     }
 
     /**
@@ -62,6 +62,15 @@ public class GamePlayManager extends WorldShiftManager {
     public void addPoints(int points) {
         this.points += points;
         score.setScorePoints(this.points);
+    }
+
+    /**
+     * Returns the current lives from the JetFighter.
+     *
+     * @return the lives that the {@link JetFighter} has.
+     */
+    public int getLives() {
+        return lives;
     }
 
     /**

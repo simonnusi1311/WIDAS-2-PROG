@@ -1,5 +1,7 @@
 package thd.gameobjects.movable;
 
+import thd.game.level.Difficulty;
+import thd.game.level.Level;
 import thd.game.managers.GamePlayManager;
 import thd.game.utilities.GameView;
 import thd.gameobjects.base.*;
@@ -20,6 +22,7 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
     private GreyJetAnimationState greyJetAnimationState;
     private ExplosionState explosionState;
     private boolean isExplosionSound;
+    private double pixelDownForGreyJet;
 
     /**
      * Creates a new grey jet object with position, speed and size.
@@ -34,6 +37,11 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
         greyJetMovementPattern = new GreyJetMovementPattern();
         position.updateCoordinates(greyJetMovementPattern.startPosition());
         speedInPixel = 6;
+        if (Level.difficulty == Difficulty.EASY) {
+            pixelDownForGreyJet = 1.8;
+        } else {
+            pixelDownForGreyJet = 2.2;
+        }
         size = 0.80;
         rotation = 0;
         width = 35;
@@ -156,7 +164,7 @@ public class GreyJet extends CollidingGameObject implements ShiftableGameObject,
             greyJetMovementPattern.gamingObjectCanMoveHorizontal(this);
             teleportToOppositeSide();
         }
-        position.down(2.2);
+        position.down(pixelDownForGreyJet);
     }
 
     private void teleportToOppositeSide() {

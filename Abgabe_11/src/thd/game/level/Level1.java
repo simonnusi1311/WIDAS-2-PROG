@@ -10,7 +10,7 @@ public class Level1 extends Level {
      * and starting position in the game world.
      */
     public Level1() {
-        name = "LevelOne";
+        name = "Level One";
         number = 1;
         world = """
                 ......................................C.........................E....................................................\s
