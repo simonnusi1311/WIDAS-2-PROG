@@ -1,5 +1,7 @@
 package thd.game.managers;
 
+import thd.game.level.Difficulty;
+import thd.game.level.Level;
 import thd.game.utilities.GameView;
 import thd.gameobjects.base.GameObject;
 import thd.gameobjects.movable.*;
@@ -37,10 +39,12 @@ public class GamePlayManager extends WorldShiftManager {
         lifeCounter.setLifeCounter(lives);
         if (lives == 0) {
             destroyGameObject(jetFighter);
-            moveWorldUp(2.2);
-            if (gameView.timer(1000, 0, this)) {
-                gameView.stopAllSounds();
+            if (Level.difficulty == Difficulty.EASY) {
+                moveWorldUp(1.8);
+            } else {
+                moveWorldUp(2.2);
             }
+                gameView.stopAllSounds();
         }
     }
 
@@ -49,8 +53,9 @@ public class GamePlayManager extends WorldShiftManager {
      * immediately reduces the JetFighter's life to zero.
      */
     public void fuelIsEmpty() {
-        lifeCounter.setLifeCounter(0);
-        lives = 0;
+        if (lives > 0) {
+            lifeLost();
+        }
     }
 
     /**

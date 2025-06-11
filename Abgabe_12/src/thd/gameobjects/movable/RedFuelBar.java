@@ -50,6 +50,21 @@ public class RedFuelBar extends GameObject {
     }
 
     /**
+     * Reset the RedFuelBar after the restart.
+     */
+    public void resetRedFuelBar() {
+        position.updateCoordinates((GameView.WIDTH / 2.0) + 155, GameView.HEIGHT - 60);
+        if (Level.difficulty == Difficulty.EASY) {
+            speedInPixel = 0.02;
+            pixelForBoostToRight = 0.65;
+        } else {
+            speedInPixel = 0.05;
+            pixelForBoostToRight = 0.60;
+        }
+        jetHitsFuelItem = false;
+    }
+
+    /**
      * Sets whether the jet has hit a fuel item.
      *
      * @param jetHitsFuelItem true if jet hits item, false if not

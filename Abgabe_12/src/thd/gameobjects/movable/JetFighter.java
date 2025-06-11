@@ -351,7 +351,7 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
             }
             case RESPAWNING -> {
                 if (jetSoundIsPlaying) {
-                    gameView.stopSound(id3);
+                    gameView.stopSound(id);
                     jetSoundIsPlaying = false;
                 }
                 if (speedSoundIsPlaying) {
@@ -495,8 +495,19 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         wasRespawnBeforeFlying = false;
         increaseTheSpeed = false;
         collisionWithFuelItem = false;
-        redFuelBar.getPosition().updateCoordinates((GameView.WIDTH / 2.0) + 155, GameView.HEIGHT - 60);
+        redFuelBar.resetRedFuelBar();
         gameView.stopAllSounds();
+        jetSoundIsPlaying = false;
+    }
+
+    /**
+     * Plays the flight sound from the {@link JetFighter} after a respawn.
+     */
+    public void playJetSound() {
+        if (!jetSoundIsPlaying) {
+            gameView.playSound("jetfighter_flight.wav", true);
+            jetSoundIsPlaying = true;
+        }
     }
 }
 
