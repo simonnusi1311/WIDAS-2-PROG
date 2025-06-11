@@ -99,10 +99,4 @@ public class Level2 extends Level {
         worldOffsetColumns = 0;
         worldOffsetLines = 68;
     }
-
-    private void printWorldLineCount() {
-        int lineCount = world.split("\n").length;
-        System.out.println("Anzahl der Zeilen im Level 2 + " + lineCount);
-    }
-
 }

@@ -100,10 +100,4 @@ public class Level4 extends Level {
         worldOffsetColumns = 0;
         worldOffsetLines = 70;
     }
-
-    private void printWorldLineCount() {
-        int lineCount = world.split("\n").length;
-        System.out.println("Anzahl der Zeilen im Level 4 + " + lineCount);
-    }
-
 }
