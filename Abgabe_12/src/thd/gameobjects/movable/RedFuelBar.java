@@ -52,7 +52,7 @@ public class RedFuelBar extends GameObject {
     /**
      * Reset the RedFuelBar after the restart.
      */
-    public void resetRedFuelBar() {
+    void resetRedFuelBar() {
         position.updateCoordinates((GameView.WIDTH / 2.0) + 155, GameView.HEIGHT - 60);
         if (Level.difficulty == Difficulty.EASY) {
             speedInPixel = 0.02;

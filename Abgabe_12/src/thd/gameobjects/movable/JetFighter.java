@@ -499,15 +499,5 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         gameView.stopAllSounds();
         jetSoundIsPlaying = false;
     }
-
-    /**
-     * Plays the flight sound from the {@link JetFighter} after a respawn.
-     */
-    public void playJetSound() {
-        if (!jetSoundIsPlaying) {
-            gameView.playSound("jetfighter_flight.wav", true);
-            jetSoundIsPlaying = true;
-        }
-    }
 }
 
