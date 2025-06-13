@@ -4,12 +4,10 @@ import thd.game.level.*;
 import thd.game.utilities.GameView;
 import thd.gameobjects.base.CollidingGameObject;
 
-
 import java.util.List;
 
 class LevelManager extends GameWorldManager {
     private List<Level> levels;
-    private static final int LIVES = 6;
 
     protected LevelManager(GameView gameView) {
         super(gameView);
@@ -23,10 +21,15 @@ class LevelManager extends GameWorldManager {
     }
 
     protected void initializeGame() {
-        levels = List.of(new Level1(), new Level2(), new Level3(), new Level4(), new Level5(), new Level6(), new Level7(), new Level8(), new Level9(),
-                new Level10(), new Level11(), new Level12());
+        levels = List.of(
+                new Level1(), new Level2(), new Level3(), new Level4(), new Level5(), new Level6(),
+                new Level7(), new Level8(), new Level9(), new Level10(), new Level11(), new Level12()
+        );
         level = levels.get(0);
-        lives = LIVES;
+        lives = switch (Level.difficulty) {
+            case EASY -> 12;
+            case STANDARD -> 10;
+        };
         points = 0;
     }
 

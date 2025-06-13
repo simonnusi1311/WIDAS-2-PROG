@@ -70,9 +70,14 @@ public class LifeCounter extends GameObject {
      */
     @Override
     public void addToCanvas() {
-        gameView.addTextToCanvas(String.valueOf(lifeCounter), position.getX(), position.getY() + 9,
-                size, true, Color.BLACK, rotation, "font.ttf");
-        gameView.addImageToCanvas("jet_fighter.png", position.getX() + 30, position.getY() + 15, 0.65, 0);
+        if (lifeCounter >= 10) {
+            gameView.addTextToCanvas(String.valueOf(lifeCounter), position.getX() - 30, position.getY() + 9,
+                    size, true, Color.BLACK, rotation, "font.ttf");
+        } else {
+            gameView.addTextToCanvas(String.valueOf(lifeCounter), position.getX(), position.getY() + 9,
+                    size, true, Color.BLACK, rotation, "font.ttf");
+        }
+        gameView.addImageToCanvas("jet_fighter.png", position.getX() + 25, position.getY() + 15, 0.65, 0);
     }
 
 

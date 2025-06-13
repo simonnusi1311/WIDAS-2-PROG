@@ -79,9 +79,9 @@ class GameManager extends LevelManager {
         Level.difficulty = Difficulty.fromName(chosenDifficulty);
         FileAccess.writeDifficultyToDisc(Level.difficulty);
         if (Level.difficulty == Difficulty.EASY) {
-            lives = 8;
+            lives = 12;
         } else {
-            lives = 6;
+            lives = 10;
         }
         lifeCounter.setLifeCounter(lives);
         initializeGame();

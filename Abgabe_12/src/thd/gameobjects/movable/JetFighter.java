@@ -290,92 +290,11 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         handleSpeedLogicOrFreeze();
 
         switch (currentState) {
-            case FLYING -> {
-                if (wasRespawnBeforeFlying) {
-                    increaseTheSpeed = false;
-                    speedSoundIsPlaying = false;
-                    wasRespawnBeforeFlying = false;
-                }
-
-                if (!jetSoundIsPlaying) {
-                    id = gameView.playSound("jetfighter_flight.wav", true);
-                    jetSoundIsPlaying = true;
-                }
-                if (isFlyingRight) {
-                    flyingState = FlyingState.FLYING_RIGHT;
-                } else if (isFlyingLeft) {
-                    flyingState = FlyingState.FLYING_LEFT;
-                } else {
-                    flyingState = FlyingState.FLYING_STANDARD;
-                }
-
-                if (increaseTheSpeed && gameView.timer(100, 0, this)) {
-                    speedingState = speedingState.next();
-                }
-                if (isFlyingRight) {
-                    flyingState = FlyingState.FLYING_RIGHT;
-                } else if (isFlyingLeft) {
-                    flyingState = FlyingState.FLYING_LEFT;
-                } else {
-                    flyingState = FlyingState.FLYING_STANDARD;
-                }
-            }
-            case EXPLODING -> {
-                if (jetSoundIsPlaying) {
-                    gameView.stopSound(id);
-                    gameView.stopSound(id2);
-                    gameView.stopSound(id3);
-                    jetSoundIsPlaying = false;
-                }
-                if (speedSoundIsPlaying) {
-                    gameView.stopSound(id3);
-                    speedSoundIsPlaying = false;
-                }
-
-                if (gameView.timer(100, 0, this)) {
-                    explosionState = explosionState.next();
-                }
-                if (explosionState == ExplosionState.EXPLOSION_3) {
-                    if (speedSoundIsPlaying) {
-                        gameView.stopSound(id3);
-                        speedSoundIsPlaying = false;
-                    }
-
-                    position.updateCoordinates(findSafeRespawnPosition());
-                    currentState = State.RESPAWNING;
-                    isInRespawnPhase = true;
-                    blinkVisible = true;
-                    isExplosionSound = false;
-                    increaseTheSpeed = false;
-                }
-            }
-            case RESPAWNING -> {
-                if (jetSoundIsPlaying) {
-                    gameView.stopSound(id);
-                    jetSoundIsPlaying = false;
-                }
-                if (speedSoundIsPlaying) {
-                    gameView.stopSound(id3);
-                    speedSoundIsPlaying = false;
-                }
-                flyingState = FlyingState.FLYING_STANDARD;
-
-                if (gameView.timer(150, 0, this)) {
-                    blinkVisible = !blinkVisible;
-                }
-
-                if (gameView.timer(1000, 0, this)) {
-                    if (speedSoundIsPlaying) {
-                        gameView.stopSound(id3);
-                    }
-                    speedSoundIsPlaying = false;
-                    currentState = State.FLYING;
-                    isInRespawnPhase = false;
-                    blinkVisible = true;
-                    wasRespawnBeforeFlying = true;
-                }
-            }
+            case FLYING -> handleFlyingState();
+            case EXPLODING -> handleExplodingState();
+            case RESPAWNING -> handleRespawningState();
         }
+
         isFlyingLeft = false;
         isFlyingRight = false;
     }
@@ -425,6 +344,68 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
         }
     }
 
+    private void handleFlyingState() {
+        if (wasRespawnBeforeFlying) {
+            increaseTheSpeed = false;
+            speedSoundIsPlaying = false;
+            wasRespawnBeforeFlying = false;
+        }
+
+        if (!jetSoundIsPlaying) {
+            id = gameView.playSound("jetfighter_flight.wav", true);
+            jetSoundIsPlaying = true;
+        }
+
+        updateFlyingState();
+
+        if (increaseTheSpeed && gameView.timer(100, 0, this)) {
+            speedingState = speedingState.next();
+        }
+    }
+
+    private void handleExplodingState() {
+        stopJetAndSpeedSounds();
+
+        if (gameView.timer(100, 0, this)) {
+            explosionState = explosionState.next();
+        }
+
+        if (explosionState == ExplosionState.EXPLOSION_3) {
+            position.updateCoordinates(findSafeRespawnPosition());
+            currentState = State.RESPAWNING;
+            isInRespawnPhase = true;
+            blinkVisible = true;
+            isExplosionSound = false;
+            increaseTheSpeed = false;
+        }
+    }
+
+    private void handleRespawningState() {
+        stopJetAndSpeedSounds();
+        flyingState = FlyingState.FLYING_STANDARD;
+
+        if (gameView.timer(150, 0, this)) {
+            blinkVisible = !blinkVisible;
+        }
+
+        if (gameView.timer(1000, 0, this)) {
+            currentState = State.FLYING;
+            isInRespawnPhase = false;
+            blinkVisible = true;
+            wasRespawnBeforeFlying = true;
+        }
+    }
+
+    private void updateFlyingState() {
+        if (isFlyingRight) {
+            flyingState = FlyingState.FLYING_RIGHT;
+        } else if (isFlyingLeft) {
+            flyingState = FlyingState.FLYING_LEFT;
+        } else {
+            flyingState = FlyingState.FLYING_STANDARD;
+        }
+    }
+
     private Position findSafeRespawnPosition() {
         ArrayList<Double> possibleXCoordinatesToSpawn = new ArrayList<>();
 
@@ -449,6 +430,19 @@ public class JetFighter extends CollidingGameObject implements MainCharacter {
             }
         }
         return new Position(GameView.WIDTH / 2.0, 600);
+    }
+
+    private void stopJetAndSpeedSounds() {
+        if (jetSoundIsPlaying) {
+            gameView.stopSound(id);
+            gameView.stopSound(id2);
+            gameView.stopSound(id3);
+            jetSoundIsPlaying = false;
+        }
+        if (speedSoundIsPlaying) {
+            gameView.stopSound(id3);
+            speedSoundIsPlaying = false;
+        }
     }
 
     /**
